@@ -1,0 +1,1142 @@
+---
+title: "Introduction to Bayesian Methods"
+subtitle: "Key ideas and concepts"
+author:
+ - name: "Robbie M. Parks"
+   email: "robbie.parks@columbia.edu"
+institute: "Environmental Health Sciences, Columbia University"
+date: 2023-08-14
+date-format: medium
+title-slide-attributes:
+  data-background-color: "#f3f4f4"
+  data-background-image: "../../assets/bmeh_normal.png"
+  data-background-size: 80%
+  data-background-position: 60% 120%
+format:
+  revealjs:
+    slide-number: true
+    incremental: true
+    chalkboard:
+      buttons: false
+      preview-links: auto
+    logo: "../../assets/bmeh_normal.png"
+    theme: [default, ../../assets/style.scss]
+---
+
+```{r}
+library(here)
+library(tidyverse)
+library(nimble)
+library(bayesplot)
+library(posterior)
+library(hrbrthemes)
+```
+
+# Outline
+
+- Overview
+- Introduction to Bayesian methods and concepts
+- Using `NIMBLE` for Bayesian inference
+
+# Overview
+
+## This course is for those who
+
+- Are interested or who have heard about Bayesian modeling.
+- Work in Environmental Health (or adjacent fields).
+- Have little theoretical or practical experience of Bayesian ideas.
+- Would like some tools and know-how to get started in an approachable and friendly setting.
+- People who would like to have some fun while learning!
+- Some equations will be there but mainly for reference.
+- Lots of code though throughout the two days...
+
+## `R`
+
+- `R` is an interactive environment developed by statisticians for data analysis.
+- A more detailed Introduction to `R` can be found at https://www.r-project.org.
+- `R` is the environment we will use throughout the workshop.
+- But this isn't a course to learn R...
+- There will lots of code, though we will restrict the equations as much as possible.
+
+## `R` code
+
+::: nonincremental
+- Sample `R` code:
+:::
+
+``` R
+# Load packages
+library(ggplot2)
+
+# Create a dataset
+set.seed(100)
+data = data.frame(x=rnorm(100),y=rnorm(100))
+
+# Plot and rough fit
+p <- ggplot(data, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "loess")
+
+plot(p)
+```
+
+## `R` code output
+
+::: nonincremental
+- Output of code:
+:::
+
+```{r}
+#| echo: false
+library(ggplot2)
+set.seed(100)
+data <- data.frame(x = rnorm(100), y = rnorm(100))
+
+p <- ggplot(data, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "loess")
+
+plot(p)
+```
+
+## `RStudio` by `Posit`
+
+- `RStudio` is an integrated development environment (IDE) for `R`.
+- `RStudio` provides a convenient graphical interface to `R`, making it more user-friendly, and providing many useful features.
+- Such features include direct code execution, tools for plotting, history, debugging and workspace management.
+- A more detailed background on to `RStudio` can be found at [https://www.rstudio.com/about/](https://www.rstudio.com/about/).
+
+## `RStudio` by `Posit`
+
+![](assets/what_is_rstudio.png){.r-stretch}
+
+## `Posit` (`RStudio`) `Cloud` {.smaller}
+
+- We will assume you have done the preliminary homework, which includes learning the basics of `RStudio` `Cloud`.
+- `RStudio` `Cloud` is a cloud-based `RStudio` which runs projects and code in the cloud.
+- `RStudio` `Cloud` allows convenient scaling and sharing of code, including for training programs such as SHARP.
+- Registration for free is available via [https://rstudio.cloud/](https://rstudio.cloud/).
+- We will go through how to navigate `RStudio` `Cloud` together
+- More details are available via [https://rstudio.cloud/learn/guide](https://rstudio.cloud/learn/guide).
+
+## `GitHub`
+
+- Version control to interface with `Posit` (`RStudio`) `Cloud.`
+- This is just for information, as you will not be expected to be an expert on `GitHub` to participate in this `SHARP` course.
+- However, you should learn it in general as it's really useful in today's modern research environment.
+
+![](assets/github_banner.png){.r-stretch}
+
+##  `NIMBLE` {.smaller}
+
+- `NIMBLE` is one of several Bayesian inference packages.
+- `NIMBLE` code is written in a slightly unusual format if you're used to just using base `R`.
+- Written in the style of a program called `BUGS`, developed at Imperial College London.
+- But you don't really need to know about `BUGS` to be able to use `NIMBLE.`
+- In the lab after this, we will start with some straightforward examples for situations you're likely familiar with to introduce the style of writing models.
+- These examples will feature basic regression models using linear predictors.
+
+## `R` with `NIMBLE` (from lab immediately after this)
+
+::: nonincremental
+- Example basic linear multi-predictor regression:
+:::
+
+$$
+\begin{split}
+y_i &\sim \text{Normal}(\mu_i, \sigma) \quad i = 1,..., N \\
+\mu_i &= \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3
+\end{split}
+$$
+
+## `R` with `NIMBLE` (from lab immediately after this)
+
+::: nonincremental
+- As written in frequentist form:
+:::
+
+``` R
+model_freq <- lm(
+  y ~ x1 + x2 + x3,
+  data = df
+)
+```
+
+## `R` with `NIMBLE` (from lab immediately after this)
+
+::: nonincremental
+- Sample `NIMBLE` code:
+:::
+
+``` R
+code <- nimbleCode({
+  # priors for parameters
+  alpha ~ dnorm(0, sd = 100) # prior for alpha
+  beta1 ~ dnorm(0, sd = 100) # prior for beta1
+  beta2 ~ dnorm(0, sd = 100) # prior for beta2
+  beta3 ~ dnorm(0, sd = 100) # prior for beta3
+  sigma ~ dunif(0, 100) # prior for variance components
+
+  # regression formula
+  for (i in 1:n) { # n is the number of observations we have in the data
+    mu[i] <- alpha + beta1 * x1[i] + beta2 * x2[i] + beta3 * x3[i] # manual entry of linear predictors
+    y[i] ~ dnorm(mu[i], sd = sigma)
+  }
+})
+```
+
+## `R` with `NIMBLE` (from lab immediately after this) {.smaller}
+
+::: nonincremental
+- Comparing frequentist (top) with `NIMBLE` code (bottom):
+:::
+
+``` R
+model_freq <- lm(
+  y ~ x1 + x2 + x3,
+  data = df
+)
+```
+``` R
+code <- nimbleCode({
+  # priors for parameters
+  alpha ~ dnorm(0, sd = 100) # prior for alpha
+  beta1 ~ dnorm(0, sd = 100) # prior for beta1
+  beta2 ~ dnorm(0, sd = 100) # prior for beta2
+  beta3 ~ dnorm(0, sd = 100) # prior for beta3
+  sigma ~ dunif(0, 100) # prior for variance components
+
+  # regression formula
+  for (i in 1:n) { # n is the number of observations we have in the data
+    mu[i] <- alpha + beta1 * x1[i] + beta2 * x2[i] + beta3 * x3[i] # manual entry of linear predictors
+    y[i] ~ dnorm(mu[i], sd = sigma)
+  }
+})
+```
+
+# Introduction to Bayesian methods and concepts
+
+## Classical probability
+
+- "Frequentist".
+- Limit of long-run relative frequency.
+- Ratio of the number of times event occurred to the number of trials.
+
+## Classical probability
+
+![](assets/dice_wikipedia.svg){.absolute top=100 right=50 width="200" height="200"}
+
+- Consider rolling a fair six-sided die many times.
+- We are seeing how often we roll a $2$.
+- We roll die a large number of times ($N$).
+- Probability that we roll a $2$:
+- $$Pr(X=2) = N(X=2)/N$$
+- This will tend to $1/6=0.16666666...$ as $N \rightarrow \infty$
+
+## Classical probability
+
+``` R
+# Load packages
+library(ggplot2)
+library(purrr)
+
+# Create dataset
+set.seed(100)
+n=100
+data = data.frame(x=rdunif(n,6))
+
+# Plot
+ggplot(data) +
+  geom_histogram(aes(x,y=after_stat(count)/sum(after_stat(count)))) +
+  geom_hline(yintercept = 1/6, linetype=2) +
+  xlab('Roll value') + ylab('Count') +
+  ggtitle(paste0('Rolling n = ',n,' times')) +
+  theme_bw()
+```
+
+## Classical probability
+
+```{r}
+library(ggplot2)
+library(purrr)
+set.seed(100)
+n <- 100
+data <- data.frame(x = rdunif(n, 6))
+
+ggplot(data) +
+  geom_histogram(aes(x, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_hline(yintercept = 1 / 6, linetype = 2) +
+  xlab("Roll value") +
+  ylab("Count") +
+  ggtitle(paste0("Rolling n = ", n, " times")) +
+  theme_bw()
+```
+
+## Classical probability
+
+```{r}
+library(ggplot2)
+library(purrr)
+set.seed(100)
+n <- 1000
+data <- data.frame(x = rdunif(n, 6))
+
+ggplot(data) +
+  geom_histogram(aes(x, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_hline(yintercept = 1 / 6, linetype = 2) +
+  xlab("Roll value") +
+  ylab("Count") +
+  ggtitle(paste0("Rolling n = ", n, " times")) +
+  theme_bw()
+```
+
+## Classical probability
+
+```{r}
+library(ggplot2)
+library(purrr)
+set.seed(100)
+n <- 10000
+data <- data.frame(x = rdunif(n, 6))
+
+ggplot(data) +
+  geom_histogram(aes(x, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_hline(yintercept = 1 / 6, linetype = 2) +
+  xlab("Roll value") +
+  ylab("Count") +
+  ggtitle(paste0("Rolling n = ", n, " times")) +
+  theme_bw()
+```
+
+## Classical probability
+
+```{r}
+library(ggplot2)
+library(purrr)
+set.seed(100)
+n <- 100000
+data <- data.frame(x = rdunif(n, 6))
+
+ggplot(data) +
+  geom_histogram(aes(x, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_hline(yintercept = 1 / 6, linetype = 2) +
+  xlab("Roll value") +
+  ylab("Count") +
+  ggtitle(paste0("Rolling n = ", format(n, scientific = F), " times")) +
+  theme_bw()
+```
+
+## Classical probability
+
+```{r}
+library(ggplot2)
+library(purrr)
+set.seed(100)
+n <- 1000000
+data <- data.frame(x = rdunif(n, 6))
+
+ggplot(data) +
+  geom_histogram(aes(x, y = after_stat(count) / sum(after_stat(count)))) +
+  geom_hline(yintercept = 1 / 6, linetype = 2) +
+  xlab("Roll value") +
+  ylab("Count") +
+  ggtitle(paste0("Rolling n = ", format(n, scientific = F), " times")) +
+  theme_bw()
+```
+
+## Subjective probability
+
+![](assets/rain_nyt_small.jpg){.r-stretch}
+
+## Subjective probability
+
+- What about the probability that it will rain tomorrow?
+- What is the probability that the next president will be a very old man?
+- What is the probability that aliens built the pyramids?
+- Such questions cannot be answered by long-run probability.
+- Degree of belief involved.
+- However, long-run reasoning can inform these estimations.
+- Foundation of Bayesian thinking.
+
+## Thomas Bayes and Simon Pierre Laplace
+
+- Started with these two.
+- Bayes (1701-1761) is why it's called <span style="color:red;">Bayes</span>ian.
+- Sorry Laplace (1749-1825)!
+
+![](assets/thomas_bayes_wikipedia.jpg){.absolute top=100 right=50 width="200" height="200"}
+
+![](assets/simon_laplace_wikipedia.jpg){.absolute top=350 right=50 width="200" height="200"}
+
+![](assets/big_red_cross.png){.absolute top=350 right=50 width="200" height="200"}
+
+<!-- ## Bayes theorem -->
+
+<!-- - Conditional probability is the axis on which Bayesian statistics turns. -->
+<!-- - Same equation... -->
+<!-- - ...but different interpretation. -->
+
+<!-- - $$ -->
+<!--   P(B|A) = \frac{P(A|B) P(B)}{P(A)} -->
+<!--   $$ -->
+
+## Bayes theorem, prior, likelihood and posterior
+
+- $$
+  P(\theta|y) \propto P(y|\theta) P(\theta)
+  $$
+- $P(\theta)$ is the prior
+- $P(y|\theta)$ is the likelihood
+- $P(\theta|y)$ is the posterior
+
+- Prior is what is known or estimated a priori.
+- Likelihood is probability of data given parameters of interest.
+- Posterior is probability of parameters of interest given data.
+
+## Bayesian inference
+
+- Leaving behind Frequentist inference here.
+- Bayesian when prior is unknown and is distribution is specified.
+- Bayes theorem exists in frequentist world, but here prior is a distribution.
+- Prior + Data -> Posterior.
+
+![](assets/bmeh_normal.png){.r-stretch}
+
+## Choosing the prior distribution (conjugate or not)
+
+- Prior choice can be vital.
+- Type of distribution (we will see in a second).
+- Hyperparameters/hyperpriors.
+- Often a 'natural' candidate for prior choice.
+- Mathematically solvable or not.
+- Some are solvable (conjugate).
+- Most are not (non-conjugate)...
+
+## Conjugacy
+
+- When the posterior is an analytical solution of the prior and data.
+- Examples include:
+- Normal data and Normal prior (you'll see an example in a minute).
+- Binomial data and Beta prior (logistic regression).
+- Poisson data and Gamma prior (useful for counts).
+
+## Non-conjugacy (most of the time)
+
+- Because most prior-data-posterior relationships are non-conjugate.
+- Need non-analytical solution to infer distributions.
+- This is where 'brute force' sampling of distributions takes place.
+
+## Sampling posterior
+::: nonincremental
+- Example basic linear multi-predictor regression:
+:::
+
+$$
+\begin{split}
+y_i &\sim \text{Normal}(\mu_i, \sigma) \quad i = 1,..., N \\
+\mu_i &= \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 \\
+\alpha &= 0 \\
+\beta_1 &= 0.2 \\
+\beta_2 &= 0.5 \\
+\beta_3 &= 0.3 \\
+\sigma &= 0.5\\
+\end{split}
+$$
+
+## Sampling posterior
+
+![](assets/sample_example.png){.r-stretch}
+
+## Informative or non-informative priors
+
+- Main source of intrigue from non-Bayesians is how priors are chosen.
+- Priors should be informed by existing knowledge.
+- But what if we don't know anything really prior to inference?
+- Most of the time we will not have analytical solutions (more on that later).
+- Non-informative/informative priors outside scope of this but something to pay attention to.
+
+## Example of influence of priors on sampling
+
+::: nonincremental
+- Wide priors
+:::
+
+``` R
+code <- nimbleCode({
+  # priors for parameters
+  alpha ~ dnorm(0, sd = 100) # prior for alpha
+  beta1 ~ dnorm(0, sd = 100) # prior for beta1
+  beta2 ~ dnorm(0, sd = 100) # prior for beta2
+  beta3 ~ dnorm(0, sd = 100) # prior for beta3
+  sigma ~ dunif(0, 100) # prior for variance components
+
+  # regression formula
+  for (i in 1:n) { # n is the number of observations we have in the data
+    mu[i] <- alpha + beta1 * x1[i] + beta2 * x2[i] + beta3 * x3[i] # manual entry of linear predictors
+    y[i] ~ dnorm(mu[i], sd = sigma)
+  }
+})
+```
+
+## Example of influence of priors on sampling
+
+::: nonincremental
+- Wide priors
+:::
+
+![](assets/wide_priors.png)
+
+## Example of influence of priors on sampling
+
+::: nonincremental
+- Worse priors
+:::
+
+``` R
+code_worse_priors <- nimbleCode({
+  # priors for parameters
+  alpha ~ dnorm(0, sd = 100) # prior for alpha
+  beta1 ~ dnorm(0, sd = 100) # prior for beta1
+  beta2 ~ dunif(100, 100000) # prior for beta2
+  beta3 ~ dnorm(0, sd = 100) # prior for beta3
+  sigma ~ dunif(0, 100) # prior for variance components
+
+  # regression formula
+  for (i in 1:n) {
+    mu[i] <- alpha + beta1 * x1[i] + beta2 * x2[i] + beta3 * x3[i] # manual entry of linear predictors
+    y[i] ~ dnorm(mu[i], sd = sigma)
+  }
+})
+```
+
+## Example of influence of priors on sampling
+
+::: nonincremental
+- Worse priors
+:::
+
+![](assets/worse_priors.png)
+
+## MCMC, Gibbs, approximations to sampling (variational inference)
+
+- Many different types.
+- Others in the workshop will discuss these briefly
+- For now, let us focus on building a simple model.
+
+## Non-conjugate how to get posterior?
+
+- Some kind of software to help us implement models for inference.
+- Using `R`.
+- Packages (`BUGS`,`STAN`,`INLA` etc.).
+- We will be focusing on using `NIMBLE` throughout the two days.
+
+# Using `NIMBLE` for Bayesian inference
+
+## Why we're using `NIMBLE` for (almost) everything during the workshop
+
+- Interpretability.
+- Flexibility.
+- There are other Bayesian packages.
+- You will see on Day 2...
+
+## Illustrative example of basic regression in `NIMBLE`
+
+- Let's go through an example from the upcoming lab
+
+## Linear regression
+::: nonincremental
+- Example basic linear multi-predictor regression:
+:::
+
+$$
+\begin{split}
+y_i &\sim \text{Normal}(\mu_i, \sigma) \quad i = 1,..., N \\
+\mu_i &= \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 \\
+\alpha &= 0 \\
+\beta_1 &= 0.2 \\
+\beta_2 &= 0.5 \\
+\beta_3 &= 0.3 \\
+\end{split}
+$$
+
+## Linear regression
+::: nonincremental
+- First create some example data for our model:
+:::
+
+``` R
+set.seed(1)
+p <- 3 # number of explanatory variables
+n <- 10000 # number of observations
+X <- matrix(round(rnorm(p * n), 2), nrow = n, ncol = p) # explanatory variables
+true_betas <- c(c(0.2, 0.5, 0.3)) # coefficients for beta1, beta2, beta3
+sigma <- 0.5 # variance of variability around perfect agreement
+y <- rnorm(n, X %*% true_betas, sigma)
+```
+
+## Linear regression
+::: nonincremental
+- What does the dataset look like?
+:::
+
+```{r}
+#| echo: false
+set.seed(1)
+p <- 3 # number of explanatory variables
+n <- 10000 # number of observations
+X <- matrix(round(rnorm(p * n), 2), nrow = n, ncol = p) # explanatory variables
+true_betas <- c(c(0.2, 0.5, 0.3)) # coefficients for beta1, beta2, beta3
+sigma <- 0.5
+y <- rnorm(n, X %*% true_betas, sigma)
+library(tibble)
+df <- tibble(y = y, x1 = X[, 1], x2 = X[, 2], x3 = X[, 3])
+df %>% head()
+```
+
+## Linear regression
+::: nonincremental
+- What does equivalent frequentist model output look like for reference?
+:::
+
+``` R
+model_freq <- lm(
+  y ~ x1 + x2 + x3,
+  data = df
+)
+central_est <- t(t(model_freq$coefficients))
+conf_int <- confint(model_freq)
+cbind(central_est, conf_int)
+```
+
+## Linear regression
+::: nonincremental
+- What does equivalent frequentist model output look like for reference?
+:::
+
+```{r}
+#| echo: false
+model_freq <- lm(
+  y ~ x1 + x2 + x3,
+  data = df
+)
+central_est <- t(t(model_freq$coefficients))
+conf_int <- confint(model_freq)
+cbind(central_est, conf_int)
+```
+
+## Linear regression {.smaller}
+
+::: nonincremental
+- `NIMBLE` adopts and extends `BUGS` as a modeling language and lets you program with the models you create.
+- Looks like below (as seen earlier in lecture and later in lab).
+:::
+
+``` R
+library(nimble)
+code <- nimbleCode({
+  # priors for parameters
+  alpha ~ dnorm(0, sd = 100) # prior for alpha
+  beta1 ~ dnorm(0, sd = 100) # prior for beta1
+  beta2 ~ dnorm(0, sd = 100) # prior for beta2
+  beta3 ~ dnorm(0, sd = 100) # prior for beta3
+  sigma ~ dunif(0, 100) # prior for variance components
+
+  # regression formula
+  for (i in 1:n) { # n is the number of observations we have in the data
+    mu[i] <- alpha + beta1 * x1[i] + beta2 * x2[i] + beta3 * x3[i] # manual entry of linear predictors
+    y[i] ~ dnorm(mu[i], sd = sigma)
+  }
+})
+```
+```{r}
+library(nimble)
+code <- nimbleCode({
+  # priors for parameters
+  alpha ~ dnorm(0, sd = 100) # prior for alpha
+  beta1 ~ dnorm(0, sd = 100) # prior for beta1
+  beta2 ~ dnorm(0, sd = 100) # prior for beta2
+  beta3 ~ dnorm(0, sd = 100) # prior for beta3
+  sigma ~ dunif(0, 100) # prior for variance components
+
+  # regression formula
+  for (i in 1:n) {
+    # n is the number of observations we have in the data
+    mu[i] <- alpha + beta1 * x1[i] + beta2 * x2[i] + beta3 * x3[i] # manual entry of linear predictors
+    y[i] ~ dnorm(mu[i], sd = sigma)
+  }
+})
+```
+
+## Linear regression
+
+::: nonincremental
+- Setting up data (will explain more in lab)
+:::
+
+``` R
+x1 <- X[, 1] - mean(X[, 1])
+x2 <- X[, 2] - mean(X[, 2])
+x3 <- X[, 3] - mean(X[, 3])
+
+constants <- list(n = n)
+data <- list(y = y, x1 = x1, x2 = x2, x3 = x3)
+
+inits <- list(alpha = 0, beta1 = 0, beta2 = 0, beta3 = 0, sigma = 1)
+```
+
+```{r}
+x1 <- X[, 1] - mean(X[, 1])
+x2 <- X[, 2] - mean(X[, 2])
+x3 <- X[, 3] - mean(X[, 3])
+
+constants <- list(n = n)
+data <- list(y = y, x1 = x1, x2 = x2, x3 = x3)
+
+inits <- list(alpha = 0, beta1 = 0, beta2 = 0, beta3 = 0, sigma = 1)
+```
+
+## Linear regression
+
+::: nonincremental
+- Run the MCMC simulations. There are lots of arguments in the main function, nimbleMCMC().
+:::
+
+``` R
+tic <- Sys.time()
+nimbleMCMC_samples_initial <- nimbleMCMC(
+  code = code,
+  data = data,
+  constants = constants,
+  inits = inits,
+  niter = 10000, # run 10000 samples
+  setSeed = 1,
+  samplesAsCodaMCMC = TRUE
+)
+
+toc <- Sys.time()
+toc - tic
+```
+
+## Linear regression
+
+::: nonincremental
+- Run the MCMC simulations. There are lots of arguments in the main function, nimbleMCMC().
+:::
+
+```{r}
+# library(nimble)
+tic <- Sys.time()
+nimbleMCMC_samples_initial <- nimbleMCMC(
+  code = code,
+  data = data,
+  constants = constants,
+  inits = inits,
+  niter = 10000,
+  setSeed = 1,
+  samplesAsCodaMCMC = TRUE
+)
+
+toc <- Sys.time()
+toc - tic
+```
+
+## Linear regression
+
+::: nonincremental
+- What is the summary of each estimated parameter from the samples? The following operations will help us understand.
+:::
+
+``` R
+library(bayesplot)
+library(posterior)
+library(hrbrthemes)
+summarise_draws(nimbleMCMC_samples_initial, default_summary_measures())
+```
+
+## Linear regression
+
+::: nonincremental
+- What is the summary of each estimated parameter from the samples? The following operations will help us understand.
+:::
+
+```{r}
+library(bayesplot)
+library(posterior)
+library(hrbrthemes)
+summarise_draws(nimbleMCMC_samples_initial, default_summary_measures())
+```
+
+## Linear regression
+
+::: nonincremental
+- Then examine how well the model has converged, which typically is identified by how close each rhat value is to 1.00.
+:::
+
+``` R
+summarise_draws(nimbleMCMC_samples_initial, default_convergence_measures())
+```
+
+## Linear regression
+
+::: nonincremental
+- Then examine how well the model has converged, which typically is identified by how close each rhat value is to 1.00.
+:::
+
+```{r}
+summarise_draws(nimbleMCMC_samples_initial, default_convergence_measures())
+```
+
+## Linear regression
+
+::: nonincremental
+- What do the samples of one of the unknown parameters actually look like?
+:::
+
+``` R
+mcmc_trace(nimbleMCMC_samples_initial)
+```
+
+## Linear regression
+
+::: nonincremental
+- What do the samples of one of the unknown parameters actually look like?
+:::
+
+```{r}
+mcmc_trace(nimbleMCMC_samples_initial)
+```
+
+## Linear regression
+
+::: nonincremental
+Let's now focus on `beta1` (which we know is 0.2 from setting up initially).
+:::
+
+``` R
+mcmc_trace(nimbleMCMC_samples_initial, pars = c("beta1"))
+```
+
+## Linear regression
+
+::: nonincremental
+Let's now focus on `beta1` (which we know is 0.2 from setting up initially).
+:::
+
+```{r}
+mcmc_trace(nimbleMCMC_samples_initial, pars = c("beta1"))
+```
+
+## Linear regression
+
+::: nonincremental
+Plotting `beta1` samples (posterior) as a histogram...
+:::
+
+```{r}
+# hist(nimbleMCMC_samples_initial[, "beta1"])
+mcmc_hist(nimbleMCMC_samples_initial[, c("alpha", "beta1")], pars = c("beta1"))
+```
+
+# Getting ready for the lab
+
+## The lab for this session {.smaller}
+
+- This lab will involve taking some models and concepts from the Introduction to Bayesian Methods lecture and introduce you to the way `NIMBLE` works.
+
+- During this lab session, we will:
+1. Explore how `NIMBLE` is written and works;
+2. Write some common regression models (Normal, logistic regression, Poisson);
+3. Understand how basic model assessment is made; and
+4. Test out how adjustments of models are made via different priors and more samples.
+
+# Questions?
+
+# Extra
+
+## Conditional probability
+
+- Two events $A$ and $B$.
+- Conditional event $A$ given $B$.
+- $$
+  P(A|B) = \frac{P(A \cap B)}{P(B)}
+  $$
+
+## Conditional probability
+
+![](assets/venn_diagram.png){.r-stretch}
+
+## Conditional probability
+
+In a group of 100 SHARP workshop attendees, 40 chose to stay in Manhattan, 30 chose to stay for the entire week, and 20 chose to stay in Manhattan and for the entire week. If a car buyer chosen at random chose to stay in Manhattan, what is the probability they chose to stay for the entire week?
+
+$$
+P(A|B) = \frac{P(A \cap B)}{P(B)} = 20 / 40 = 0.5
+$$
+
+## Conditional probability {.smaller}
+- $$
+  P(A|B) = \frac{P(A \cap B)}{P(B)}
+  $$
+- can also be written as...
+- $$
+  P(A \cap B) = P(A|B) P(B)
+  $$
+- Also...
+- $$
+  P(B|A) = \frac{P(A \cap B)}{P(A)}
+  $$
+- Substituting top into bottom gets...
+- $$
+  P(B|A) = \frac{P(A|B) P(B)}{P(A)}
+  $$
+
+
+## Example of a conjugate pair: Normal-Normal {.smaller}
+
+- Likelihood
+- Normal distribution is defined by two parameters $\mu$ and $\sigma$.
+- Bell curve.
+- $\mu$ is mean.
+- $\sigma$ is standard deviation.
+
+- $$
+  y|\mu,\sigma \sim Normal(\mu,\sigma^2)
+  $$
+- Prior
+- Normal distribution is mathematically the conjugate of itself, with hyperparameters $\mu_0$ and $\sigma_0$.
+
+- $$
+  \mu \sim Normal(\mu_0,\sigma_0^2)
+  $$
+
+## Normal-Normal
+
+- Posterior
+- Because of conjugacy, there is an analytical solution for the posterior which is also normally distributed.
+- But this is usually not that useful when models get very complicated.
+
+## Examples of Normal distributions
+
+$$Normal(1,0)$$
+
+```{r}
+#| echo: false
+p <- seq(-10, 10, length = 10000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dnorm(p, 0, 1), type = "l")
+```
+## Examples of Normal distributions
+
+$$Normal(1,0)$$
+
+```{r}
+#| echo: false
+p <- seq(-100, 100, length = 10000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dnorm(p, 0, 1), type = "l")
+```
+
+## Examples of Normal distributions
+
+$$Normal(0,5)$$
+
+```{r}
+#| echo: false
+p <- seq(-100, 100, length = 10000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dnorm(p, 0, 5), type = "l")
+```
+
+## Examples of Normal distributions
+
+$$Normal(0,20)$$
+
+```{r}
+#| echo: false
+p <- seq(-100, 100, length = 10000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dnorm(p, 0, 20), type = "l")
+```
+
+
+
+
+
+
+
+## Binomial-Beta {.smaller}
+
+- Likelihood
+- Binomial distribution is when there is success (1) or failure (0) with the proportion of success ($\pi$).
+- $n$ trials.
+
+- $$
+  y|\pi \sim Binomial(\pi,n)
+  $$
+- Prior
+- Beta distribution is mathematically the conjugate of binomial defined by two parameters $a$ and $b$.
+- Beta distributuon is 'natural' fit becasue it ranges from 0 to 1.
+
+- $$
+  \pi \sim Beta(a,b)
+  $$
+
+## Binomial-Beta
+
+- Posterior
+- Because of conjugacy, there is an analytical solution for the posterior.
+
+- $$
+  p(\pi|y) \sim Beta(y+a,n-y+b)
+  $$
+
+## Examples of Beta distributions
+
+$$Beta(2,10)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 1, length = 100)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dbeta(p, 2, 10), type = "l")
+```
+
+## Examples of Beta distributions
+
+$$Beta(0.5,0.5)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 1, length = 100)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dbeta(p, 0.5, 0.5), type = "l")
+```
+
+## Examples of Beta distributions
+
+$$Beta(5,1)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 1, length = 100)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dbeta(p, 5, 1), type = "l")
+```
+
+## Examples of Beta distributions
+
+$$Beta(5,5)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 1, length = 100)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dbeta(p, 5, 5), type = "l")
+```
+
+## Examples of Beta distributions
+
+$$Beta(5,20)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 1, length = 100)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dbeta(p, 5, 20), type = "l")
+```
+
+## Examples of Beta distributions
+
+$$Beta(50,200)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 1, length = 100)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dbeta(p, 50, 200), type = "l")
+```
+
+## Types of conjugate pairs: Poisson-Gamma {.smaller}
+
+- Likelihood
+- Normal distribution is defined by on parameters $\lambda$.
+- Very common for count data.
+- $\lambda$ is rate.
+
+- $$
+  y|\lambda \sim Poisson(\lambda)
+  $$
+- Prior
+- Gamma distribution is mathematically the conjugate of Poisson, with hyperparameters $\mu_0$ and $\sigma_0$.
+- Gamma distributuon is 'natural' fit becasue it ranges from 0 to $\infty$.
+
+- $$
+  \lambda \sim Gamma(a,b)
+  $$
+
+## Poisson-Gamma
+
+- Posterior
+- Because of conjugacy, there is an analytical solution for the posterior.
+
+- $$
+  \rho | y \sim Gamma(a+y,b+E)
+  $$
+
+## Examples of Gamma distributions
+
+$$Gamma(0.1,0.1)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 30, length = 1000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dgamma(p, 0.1, 0.1), type = "l")
+```
+
+## Examples of Gamma distributions
+
+$$Gamma(1,1)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 30, length = 1000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dgamma(p, 1, 1), type = "l")
+```
+
+## Examples of Gamma distributions
+
+$$Gamma(3,3)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 30, length = 1000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dgamma(p, 3, 3), type = "l")
+```
+
+## Examples of Gamma distributions
+
+$$Gamma(3,0.5)$$
+
+```{r}
+#| echo: false
+p <- seq(0, 30, length = 1000)
+
+# create plot of Beta distribution with shape parameters 2 and 10
+plot(p, dgamma(p, 3, 0.5), type = "l")
+```

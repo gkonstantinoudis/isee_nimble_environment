@@ -1,0 +1,246 @@
+---
+title: "Bayesian Modelling for Environmental Health"
+subtitle: "Welcome and Introduction"
+author:
+ - name: ""
+   email: ""
+institute: ""
+date: 2023-08-14
+date-format: medium
+title-slide-attributes:
+  data-background-color: "#f3f4f4"
+  data-background-image: "../../assets/bmeh_normal.png"
+  data-background-size: 80%
+  data-background-position: 60% 120%
+  subparagraph: yes
+format:
+  revealjs:
+    slide-number: true
+    incremental: false
+    chalkboard:
+      buttons: false
+      preview-links: auto
+    logo: "../../assets/bmeh_normal.png"
+    theme: [default, ../../assets/style.scss]
+---
+
+# Welcome!
+
+## Logistics {.smaller}
+
+- __Wi-Fi__ Network: guest-net (no password). Open any webpage (i.e. BBC News, Amazon, etc.) on your browser, a pop-up will appear to connect to guest Wi-Fi. Accept terms to gain access.
+- __Restrooms__. Directly outside the classroom (women on the left, men on the right)
+- __Course materials__. All Material (lectures/labs) is located on Posit Cloud. You were invited to the ‘sharp_bayesian_environmental_health_2023’ Workspace via email on Sunday 8/12.
+- __Name tags__. Please wear during workshop to make connecting with others easier! Please return after the Workshop to help us be greener.
+- Contact Meaghan Doherty __914-522-8114__ for assistance
+
+## Overview of workshop {.bigger}
+
+::: {style="font-size: 130%;"}
+The __Bayesian Modeling for Environmental Health Workshop__ is a two-day intensive course of seminars and hands-on analytical sessions to provide an _approachable_ and _practical_ overview of __concepts__, __techniques__, and __data analysis methods__ used in Bayesian modeling with applications in Environmental Health.
+:::
+
+## Overview of workshop {.smaller}
+
+::: incremental
+- By the end of the workshop, participants should be familiar with the following topics:
+
+  - Principles of Bayesian inference
+  - Practicalities of Bayesian inference
+  - Choosing priors
+  - Different data structures (spatial, point, continuous, categorical)
+  - Advantages and drawbacks of Bayesian approaches
+  - Temporal modeling
+  - Spatial modeling
+  - Spatio-temporal modeling
+  - Hierarchical modeling
+  - Software options
+  - Examples of use
+  - Examples of current and future research
+:::
+
+## Bayesian Modelling Workshop Team
+
+![](assets/instructor.png)
+
+## Bayesian Modelling Workshop Team
+
+![](assets/admin.png)
+
+## 9 US States + 1 country
+
+![](assets/attendee_map.png)
+
+## 10 US States + 5 countries
+
+![](assets/attendee_instructor_map.png)
+
+## Day 1
+
+::: {style="font-size: 50%;"}
+
+| Time         | Activity                 |
+| ------------ | ------------------------ |
+| 8:30 - 9:00  | Check in and Breakfast   |
+| 9:00 - 9:15  | Welcome and Introduction |
+| 9:15 - 10:00 | Introduction to Bayesian Methods (Lecture) |
+| 10:00  - 10:15 | Break / One-on-one questions
+| 10:15  - 11:00 | [Introduction to Bayesian Methods](/labs/introduction_to_bayesian_methods/introduction_to_bayesian_methods.qmd) (Hands-on Lab) |
+| 11:00 - 11:15 | Break / One-on-one questions |
+| 11:15 - 12:00 | Bayesian Workflow (Lecture) |
+| 12:00 - 1:00 | Networking Lunch |
+| 1:00  - 1:45 | Bayesian Regression and Temporal Modeling (Lecture) |
+| 1:45  - 2:00 | Break / One-on-one questions |
+| 2:00  - 2:45 | [Bayesian Regression and Temporal Modelling](/labs/bayesian_regression_and_temporal_modelling/bayesian_regression_and_temporal_modelling.qmd) (Hands-on Lab) |
+| 2:45  - 3:00 | Break / One-on-one questions |
+| 3:00  - 3:45 | Hierarchical Modeling (Lecture) |
+| 3:45  - 4:00 | Break / One-on-one questions |
+| 4:00  - 4:45 | [Hierarchical Modelling](/labs/hierarchical_modelling/hierarchical_modelling.qmd) (Hands-on Lab) |
+| 4:45  - 5:00 | Questions and Wrap-up |
+
+:::
+
+## Day 2
+
+::: {style="font-size: 50%;"}
+
+| Time         | Activity                 |
+| ------------ | ------------------------ |
+| 8:30 - 9:00 | Check in and Breakfast |
+| 9:00 - 10:00 | Spatial and Spatio-temporal Modeling (Lecture) |
+| 10:00 - 10:15 | Break / One-on-one questions |
+| 10:15 - 11:00 | [Spatial and Spatio-temporal Modelling](/labs/spatiotemporal_models/spatiotemporal_models.qmd) (Hands-on Lab) |
+| 11:00 - 11:15 | Break / One-on-one questions |
+| 11:15 - 12:00 | Software Options (Lecture) |
+| 12:00 - 1:00 | Networking Lunch |
+| 1:00 - 2:00 | [Software Options](/labs/software_options/software_options.qmd) |
+| 2:00 - 2:15 | Break / One-on-one questions |
+| 2:15 - 3:00 | Bayesian Non-Parametric Ensemble (Lecture) |
+| 3:00 - 3:15 | Break / One-on-one questions |
+| 3:15 - 4:15 | [Bayesian Non-Parametric Ensemble](/labs/bayesian_nonparametric_ensemble/bayesian_nonparametric_ensemble.qmd) (Hands-on Lab) |
+| 4:15 - 5:00 | Workshop Summary, Interactive Panel Discussion & Course Wrap-up |
+| 5:00 - 5:15 | Questions and Wrap-up |
+
+:::
+
+## What is your experience level with R? {.smaller}
+
+```{r}
+# Load packages
+library(tidyverse)
+library(hrbrthemes)
+
+# Load dataset
+df <- read_csv("assets/experience_level_r.csv") |>
+  mutate(experience_level = as.factor(experience_level)) |>
+  mutate(experience_level = fct_relevel(experience_level, c("Beginner/little experience", "Some limited experience", "Extensive experience")))
+
+# Plot
+p <- ggplot(df, aes(x = experience_level)) +
+  geom_bar() +
+  xlab("Experience level with R") +
+  theme_ipsum()
+
+plot(p)
+```
+
+## What does a 50% chance of rain mean to you? {.smaller}
+
+- it generally means that weather forecasters believe that there is an equal probability of rain occurring or not occurring at a particular location or during a specified time period.
+- That there is a 50% chance that rain will occur and a 50% chance that rain will not occur
+80%
+- Among all times someone says this sentence to me, he/she will be correct half of the times.
+- I will 100% not bring an umbrella.
+- Pr(rain) == 0.5 (i.e. the probability that it will rain at all is 50%, rain/no rain equally likely)
+- 50% of the area will have rain
+- One-half chance of precipitation occurring in a particular area during a specific time?
+
+## What does a 50% chance of rain mean to you? {.smaller}
+
+- I would assume that it means there is a 50% chance that at least some part of the predicted/forecasted area will experience rain at all.
+- That 50% of the area will get rain.
+- It means based on prior knowledge and the collected other information, we believe it will rain at 50% chances.
+- Half the area will experience rain
+- 50% of the area will have rain
+- There is a 50% probability (or 1 in 2 chance/odds) that it will rain today.
+- In probability, no prior knowledge about whether or not it will rain. In practice, it’d be worth packing an umbrella.
+- Likelihood of rainfall occurring is 50%
+
+## What does a 50% chance of rain mean to you? {.smaller}
+
+- The probability of it raining at a given time and place is 50%.
+- 50% probability of getting wed in any one spot in the area during the period
+- In a given area, 50% of landmass is expected to see rainfall
+- Equal probability for a dry or wet day
+- There is a 50% chance it will rain somewhere within a geographic area over the course of a defined period of time.
+- The probability of experiencing rain, given this weather pattern is 50 out of 100.
+- It is the probability that a space in a given geographical area will receive rain.
+
+## What does a 50% chance of rain mean to you? {.smaller}
+
+- Met Office (UK): A 50% chance of rain represents a 5 in 10 chance that rain will fall at some point during that period.
+
+## What do you understand from a 95% Confidence Interval (CI)? {.smaller}
+
+- a 95% confidence interval means that if we were to repeat the same sampling procedure many times and calculate the confidence interval each time, approximately 95% of those intervals would contain the true population parameter
+- That we are 95% confident that the true value of the mean is present within a certain range of values along a certain distribution
+- 95%
+- The 95% confidence interval represents the range of values within my estimate is expected to fall with level of confidence of 95%.  However,  giving it another thought, I realize I should also define what exactly a 95% level of confidence means, but I think I will wait for the course to find out :)
+- They are better than a p-value.
+
+## What do you understand from a 95% Confidence Interval (CI)? {.smaller}
+
+- *confidence interval = in repeated sampling, 95/100 CIs will include true value // credible interval = probability that estimated value falls within this range, given observed data
+- 95% of the time the value estimated will be within the range
+- A range of values that is likely to contain the true value of a population parameter with a 95% level of confidence
+- It essentially tells us the degree of uncertainty in the data sampling process, i.e. how many times we'd expect our parameter estimate to be within our 95% CI if we repeated the same experiment that generated the 95% CI several times, and not about the probability we'd expect to see the true parameter's value fall within the CI.
+- That 95% of the data will fall within the true value.
+- It means the estimate of a parameter has 95% chances to cover the true value of the parameter within the range.
+
+## What do you understand from a 95% Confidence Interval (CI)? {.smaller}
+
+- The probability our effect falls within this range
+- 95% of the time the estimate will fall within the given CI
+- The 95% CI tells us the range of possible effect estimate spanning from the 2.5th to 97.5th percentiles.
+- I receive a rough approximation of the uncertainty around an estimate and the range of possible values if an infinite number of trials were repeated.
+- It implies that at 95% confidence the value lies within the calculated interval
+- A range of likely values for a parameter estimate based on the variability and assumed distribution of the underlying data used to make the estimate.
+- Were I to conduct the study repeatedly, 95% of the results would lie between the endpoints of the CI that I obtained in my data.
+
+## What do you understand from a 95% Confidence Interval (CI)? {.smaller}
+
+- Given necessary data generation and modeling assumptions are met, 95 of 100 confidence intervals will contain the true value over repeated sampling and evaluation
+- The test statistic is contained  95 % of the time in the CI when the same experiment is repeated multiple times on independent samples.
+- We are 95% confident that the true population mean will fall within this interval.
+- 95 out of 100 CIs (from 100 random samples) will contain the true value of the parameter of interest.
+- We are confident that the true parameter estimate lies between the lower and upper confidence limits 95% of the time. A 95% confidence interval provides us with a range of plausible estimates of the parameter of interest in the target population, based on our parameter estimate obtained in the sample cohort.
+
+## What do you understand from a 95% Confidence Interval (CI)?
+
+::: incremental
+- A 95% CI is an interval which will contain the true value 95% of the time, i.e., if you got to repeat the experiment 100 times, 95 of the 95% CIs would contain the true value, while 5 of them would not.
+- Is this what you expected?
+- There a more intuitive way?
+![](assets/Confidence Intervals.png)
+:::
+
+## What do you understand from a 95% Confidence Interval (CI)? {.smaller}
+
+::: incremental
+- Frequentist framework: If we were to repeat the data collection process 100 times and construct confidence intervals for each sample, 95 of those would contain the true parameter (i.e., the target parameter is fixed but unknown, and the interval is random).
+- Bayesian framework: Given the observed data and our prior beliefs, there is a 95% probability that the true parameter value falls within the credible interval (i.e., target parameter is random but interval is fixed).
+- Philosophical difference.
+:::
+
+<!-- - Frequentist framework: “There is an 95% probability that when computing a confidence interval from data of this sort, the effect falls within this range”. -->
+<!-- - Bayesian framework allows us to say “given the observed data, the effect has 95% probability of falling within this range”. -->
+
+## Logistics {.smaller}
+
+- __Wi-Fi__ Network: guest-net (no password). Open any webpage (i.e. BBC News, Amazon, etc.) on your browser, a pop-up will appear to connect to guest Wi-Fi. Accept terms to gain access.
+- __Restrooms__. Directly outside the classroom (women on the left, men on the right)
+- __Course materials__. All Material (lectures/labs) is located on Posit Cloud. You were invited to the ‘sharp_bayesian_environmental_health_2023’ Workspace via email on Sunday 8/12.
+- __Name tags__. Please wear during workshop to make connecting with others easier! Please return after the Workshop to help us be greener.
+- Contact Meaghan Doherty __914-522-8114__ for assistance
+
+# Questions?

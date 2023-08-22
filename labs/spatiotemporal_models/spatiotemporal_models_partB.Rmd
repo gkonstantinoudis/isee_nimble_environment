@@ -1,0 +1,685 @@
+---
+title: "Spatial and Spatio-temporal Modelling"
+subtitle: "SHARP Bayesian Modeling for Environmental Health Workshop"
+author: "Garyfallos Konstantinoudis"
+date: "August 2023"
+output: html_document
+---
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(here)
+library(tidyverse)
+library(nimble)
+library(sf)
+library(rgeos)
+library(patchwork)
+library(coda)
+library(ggmcmc)
+library(spdep)
+library(lubridate)
+library(fastDummies)
+library(INLA)
+
+extrafont::loadfonts()
+theme_set(hrbrthemes::theme_ipsum())
+
+set.seed(2)
+```
+
+# Part B: Ambient temperature and all-cause mortality in Italy
+
+In this practical we will estimate the effect of temperature on all-cause mortality in Italy during 2013-2018. As the effect of temperature on health during summer months is expected to be elevated for warmer temperatures, we will fit a linear threshold model allowing for the effect to be different above and bellow the 80th percentile of the temperature. We selected the 80th percentile in line with the literature.
+
+* First lets read the data
+```{r}
+data_italy <- readRDS(here("data", "Italy", "italy_mortality.rds"))
+glimpse(data_italy)
+summary(data_italy)
+class(data_italy)
+```
+
+* And the shapefile
+```{r}
+shp_italy <- readRDS(here("data", "italy", "italy_shp.rds"))
+glimpse(shp_italy)
+summary(shp_italy)
+class(shp_italy)
+```
+
+## B1. A linear threshold model
+
+Let $\mathcal{D}$ be the observation window of Italy and $A_1, A_2, \dots, A_N$ a partition denoting the regions in Italy with $\cup_{i=1}^NA_i = \mathcal{D}$ and $A_i\cap A_j$ for every $i\neq j$. Let $O_{itw}$ be the observed number of all-cause deaths occurred during March-July 2013-2018 in Italy at region $A_i$ and $t$-th week of year $w$. Similarly we have the expected number of deaths $E_{itw}$ and the standardised mortality ratio $\lambda_{itw}$:
+  
+\begin{equation}
+\begin{aligned}
+\hbox{O}_{itw} & \sim \hbox{Poisson}(E_{it} \lambda_{itw}) \\
+\log \lambda_{itw} & = \beta_0 +  \beta_1 X_{1itw} + \beta_2 X_{2itw} + \sum_{j=2}^5\beta_{3j} X_{3tw} + \\ & \beta_{41}X_{4itw}I(X_{4itw} \leq c) + \beta_{42}X_{4itw}I(X_{4itw} > c) + \\
+& u_{tw} + \theta_{1i} + \phi_{1i}\\
+u_{tw}  & \sim \hbox{RW1}(0, \sigma^2_{u})\\
+\theta_{1i} &\sim \hbox{Normal}(0, \sigma^2_{\theta_1})\\
+{\bf \phi_1} & \sim \hbox{ICAR}({\bf W}, \sigma_{\phi_1}^2) \,\, ,  \sum_i \phi_i  = 0 \\
+\beta_0 & \sim \text{Uniform}(-\infty, +\infty) \\
+\beta_1, \beta_2, \beta_{3j}, \beta_{41}, \beta_{42} & \sim \mathcal{N}(0, 1) 
+\end{aligned}
+\end{equation}
+
+where $X_{1itw}, X_{2itw}, X_{3tw}$ are the PM$_{10}$ concentration, relative humidity and day of the week, $\beta_1, \beta_2, \beta_{3j}$ the corresponding fixed effects. $\beta_{41}$ is the effect of temperatures $X_{4itw}$ lower than a threshold $c$, whereas, $\beta_{42}$ the effect of temperatures $X_{4itw}$ higher than $c$. Last $u_{tw}$ is a temporal random effect capturing seasonality, and $\theta_i + \phi_i$ the BYM model.
+
+We will first write the model in NIMBLE. 
+
+```{r}
+model_thr <- nimbleCode(
+  {
+    for(i in 1:N){
+      
+      O[i] ~ dpois(mu[i])
+      mu[i] <- exp(log(expected[i]) + beta_0 + 
+                     beta_tmp[i]*temperature[i] +                              # effect of temperature
+                     inprod(beta[1:K.b], X[i,1:K.b]) +                         # covariates
+                     w[IDW[i]] +                                               # adjust for temporal trends
+                     b_1[IDSP[i]])                                             # adjust for spatial trends
+      
+      Q[i] <- step(temperature[i] - x.change)
+      beta_tmp[i] <- (1 - Q[i])*b_tmp_low + Q[i]*b_tmp_high
+    }
+    
+    # Latent field
+    for(j in 1:J){
+      # For the unknown spatial confounding 
+      b_1[j] <- (1/sqrt(tau.b_1))*(sqrt((1-rho_1))*theta_1[j] + 
+                               sqrt(rho_1/scale)*phi_1[j])
+      theta_1[j] ~ dnorm(0, sd = 1)  
+    }
+    
+    phi_1[1:J] ~ dcar_normal(adj = adj[1:L], weights = weights[1:L], num = num[1:J], tau = 1, zero_mean = 1) 
+  
+    # The random walk for week 
+    w[1:Jw] ~ dcar_normal(adj = adjw[1:Lw], weights = weightsw[1:Lw], num = numw[1:Jw], 
+                        tau = tau.w, c = 2, zero_mean = 1) 
+    
+    # set the priors of the fixed effects
+    # intercept/covariates
+    beta_0 ~ dflat()
+    # days of week
+    for(kb in 1:K.b){
+      beta[kb] ~ dnorm(0, sd = 1)
+    }
+    
+    b_tmp_low ~ dnorm(0, sd = 1)
+    b_tmp_low_unscaled <- b_tmp_low/x.sd   # scale back
+    b_tmp_high ~ dnorm(0, sd = 1) 
+    b_tmp_high_unscaled <- b_tmp_high/x.sd # scale back
+    
+    # set the priors of the hyperparameters 
+    # The spatial field
+    sd.b_1 ~ dgamma(shape = 1, rate = 2)
+    tau.b_1 <- 1/(sd.b_1*sd.b_1)
+    rho_1 ~ dbeta(1, 1)  
+    
+    # The random walk
+    sd.w ~ dgamma(shape = 1, rate = 4) 
+    tau.w <- 1/(sd.w*sd.w)
+    
+  }
+)
+```
+
+
+* Define the data elements
+```{r}
+# data
+
+data_italy$id_sp <- data_italy$SIGLA %>% as.factor() %>% as.numeric()
+data_italy$id_week <- data_italy$week %>% as.factor() %>% as.numeric()
+data_italy$id_year <- data_italy$year %>% as.factor() %>% as.numeric()
+
+# set the max of the loop
+N <- nrow(data_italy)
+
+# confounders
+data_italy$pm10_lag0_3 <- as.numeric(scale(data_italy$pm10_lag0_3))
+data_italy$relativehumidity_lag0_3 <- as.numeric(scale(data_italy$relativehumidity_lag0_3))
+# day of the week
+data_italy$day <- wday(data_italy$date, label=TRUE, abbr=FALSE)
+data_italy <- cbind(data_italy, dummy_cols(data_italy$day)[,-c(1:2)])
+
+# Scale temperature
+data_italy$temperature_lag0_3 <- as.numeric(scale(data_italy$temperature_lag0_3))
+sd.temperature <- sd(data_italy$temperature_lag0_3, na.rm = TRUE)
+mean.temperarture <- mean(data_italy$temperature_lag0_3, na.rm = TRUE)
+
+
+X <- data_italy %>% select( 
+                    pm10_lag0_3, relativehumidity_lag0_3, hol, 
+                    .data_Monday, .data_Tuesday, 
+                    .data_Wednesday, .data_Thursday, 
+                    .data_Friday, .data_Saturday
+)
+
+K.b =  ncol(X)
+
+NIMBLE_data <- list(
+  
+  O = data_italy$deaths,
+  temperature = data_italy$temperature_lag0_3,
+  X = X
+
+)
+```
+
+* Prepare for constants
+```{r}
+# Define space and time structures:
+
+# Space
+J <- nrow(shp_italy)
+shp_nb <- poly2nb(shp_italy)
+nbWB_A <- nb2WB(nb = shp_nb)
+
+# calculate scaling factor for bym2
+W.scale <- nb2mat(shp_nb, zero.policy = TRUE, style = "B")
+W.scale <- -W.scale
+diag(W.scale) <- abs(apply(W.scale, 1, sum))
+Q = inla.scale.model(W.scale, constr=list(A=matrix(1, nrow=1, ncol=nrow(W.scale)), e=0))
+scale = exp((1/nrow(W.scale))*sum(log(1/diag(Q))))
+
+
+# Time
+# Function for random walks
+weightsRW <- function(Q){
+  
+  rest.comp <- list()
+  for(i in 3:(Q-2)){
+      rest.comp[[i]] <- c(i-2, i-1, i+1, i+2)
+  }
+  
+  rest.comp <- unlist(rest.comp)
+  
+  adj = c(2, 3, 1, 3, 4, 
+          rest.comp, 
+          c(Q-3, Q-2, Q, Q-2, Q-1)
+          )
+  
+  num = c(2, 3, rep(4, times = c(Q-4)), 3, 2)
+  
+  weights = c(c(2, -1, 2, 4, -1), 
+              rep(c(-1, 4, 4, -1), times = c(Q-4)),
+          c(-1, 4, 2, -1, 2))
+  
+  return(list(adj = adj, num = num, weights = weights))
+}
+
+# RW weeks
+Jw <- max(data_italy$id_week)
+W_weights <- weightsRW(Q = Jw)
+
+```
+
+* Define constants
+```{r}
+
+NIMBLE_constants <- list(
+  # for loops
+  N = N,
+  J = J,
+  Jw = Jw, 
+  K.b =  K.b,
+  
+  # IDs
+  IDW = data_italy$id_week,
+  IDSP = data_italy$id_sp,
+  
+  # space
+  L = length(nbWB_A$weights),
+  adj = nbWB_A$adj,
+  num = nbWB_A$num,
+  weights = nbWB_A$weights,
+  
+  # week
+  Lw = length(W_weights$weights),
+  adjw = W_weights$adj,
+  numw = W_weights$num,
+  weightsw = W_weights$weights,
+  
+  x.sd = sd.temperature, 
+  expected = data_italy$expected, 
+  scale = scale, 
+  
+  x.change = quantile(data_italy$temperature_lag0_3, probs = 0.8)
+  
+)
+
+```
+
+
+* Set initial values (let's run just one chain)
+```{r}
+
+initials =
+  list(
+    # fixed effects
+    beta_0 = 0,
+    beta = rep(0, K.b),
+    b_tmp_low = 0, 
+    b_tmp_high = 0,
+    # spatial field
+    theta_1 = rep(0, times = J),
+    phi_1 = rep(0, times = J),
+    sd.b_1 = 1, 
+    rho_1 = 0.5, 
+    
+    # random walks
+    w = rep(0, times = Jw), 
+    sd.w = 1
+)
+
+```
+
+* and the parameters to monitor
+```{r}
+  
+  # parameters to monitor
+  parameters = c("beta_0", "beta", 
+                 "b_tmp_low_unscaled", "b_tmp_high_unscaled",
+                 "b_1",
+                 "sd.b_1", 
+                 "rho_1", 
+                 "w", "tau.w")
+  
+```
+
+* and run NIMBLE (took 13h on my machine)
+```{r eval = FALSE}
+# NIMBLE call
+
+# define the model
+t_0 <- Sys.time()
+nimble_model <- nimbleModel(
+  code = model_thr,
+  data = NIMBLE_data,
+  constants = NIMBLE_constants,
+  inits = initials,
+  name = "model_thr",
+  calculate = FALSE
+)
+
+# compile model
+Cmodel <- compileNimble(nimble_model)
+Cmodel$calculate()
+
+nimble_model$origInits
+
+# configure and build the MCMC
+conf <- configureMCMC(nimble_model, monitors = parameters)
+MCMC <- buildMCMC(conf)
+
+# compile the MCMC
+cMCMC <- compileNimble(MCMC, project = Cmodel)
+t_1 <- Sys.time()
+t_1 - t_0 # ~ 12 minutes
+
+
+
+# MCMC setting
+
+ni <- 50000   # nb iterations
+nt <- 25      # thinning interval
+nb <- 25000   # nb iterations as burn-in
+nc <- 1       # nb chains
+
+
+# run the MCMC
+t_0 <- Sys.time()
+mod_LT_res <- runMCMC(cMCMC, niter = ni, nburnin = nb, thin = nt, samples = TRUE, summary = FALSE)
+t_1 <- Sys.time()
+t_1 - t_0 # 13 hours
+
+saveRDS(mod_LT_res, file = "NIMBLE_LT_B1")
+```
+
+```{r echo = FALSE}
+mod_LT_res <- readRDS("NIMBLE_LT_B1")
+```
+
+* Check convergence
+```{r fig.width=8}
+
+plot(mod_LT_res[,"b_tmp_low_unscaled"], type = "l", ylab = "beta low")
+plot(mod_LT_res[,"b_tmp_high_unscaled"], type = "l", ylab = "beta high")
+
+```
+
+```{r eval = FALSE}
+
+plot(mod_LT_res[,"beta[1]"], type = "l")
+plot(mod_LT_res[,"beta[2]"], type = "l")
+plot(mod_LT_res[,"beta[3]"], type = "l")
+plot(mod_LT_res[,"beta[4]"], type = "l")
+plot(mod_LT_res[,"beta[5]"], type = "l")
+plot(mod_LT_res[,"beta[6]"], type = "l")
+plot(mod_LT_res[,"beta[7]"], type = "l")
+plot(mod_LT_res[,"beta[8]"], type = "l")
+plot(mod_LT_res[,"beta[9]"], type = "l")
+
+plot(mod_LT_res[,"rho_1"], type = "l")
+plot(mod_LT_res[,"sd.b_1"], type = "l")
+
+plot(mod_LT_res[,"tau.w"], type = "l")
+
+plot(mod_LT_res[,"b_1[1]"], type = "l")
+plot(mod_LT_res[,"b_1[13]"], type = "l")
+plot(mod_LT_res[,"b_1[90]"], type = "l")
+
+plot(mod_LT_res[,"w[1]"], type = "l")
+plot(mod_LT_res[,"w[10]"], type = "l")
+plot(mod_LT_res[,"w[15]"], type = "l")
+
+```
+
+* Examine spatial and temporal correlation
+```{r warning = FALSE}
+
+# Temporal trends:
+mod_LT_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("w")) %>% 
+  apply(., 2, quantile, probs = c(0.5, 0.025, 0.975)) %>% 
+  t() %>% 
+  as.data.frame() %>% 
+  dplyr::mutate(id_week = rownames(.), id = gsub("\\D", "", id_week) %>% as.numeric()) %>% 
+  ggplot(data=.) + 
+  geom_point(aes(x=id, y=`50%` %>% exp())) + 
+  geom_line(aes(x=id, y=`50%` %>% exp())) + 
+  geom_ribbon(aes(x=id, ymin = `2.5%` %>% exp(), ymax = `97.5%` %>% exp()), alpha = 0.5, fill = "grey70") + 
+  xlab("Week") + ylab("Seasonal relative risk")
+
+```
+
+```{r fig.width=10, warning = FALSE}
+
+# Spatial trends:
+mod_LT_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("b_1")) %>% 
+  apply(., 2, median) %>% exp() -> shp_italy$spRR
+  
+mod_LT_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("b_1")) %>% 
+  apply(., 2, function(X) mean(X>0)) -> shp_italy$exceed
+
+
+shp_italy %>% 
+  ggplot(data=.) + 
+  geom_sf(aes(fill = spRR)) + 
+  scale_fill_viridis_c(option = "A")| 
+  shp_italy %>% 
+  ggplot(data=.) + 
+  geom_sf(aes(fill = exceed)) + 
+  scale_fill_viridis_c(option = "A")
+
+```
+
+* Examine the effects of the confounders:
+```{r}
+
+mod_LT_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("beta[")) %>% 
+   apply(., 2, quantile, probs = c(0.5, 0.025, 0.975)) %>% exp() %>% 
+  t() %>% as.data.frame() -> cov.eff
+
+rownames(cov.eff) <- colnames(X)
+cov.eff
+
+```
+
+* Examine the effects of the temperature:
+```{r}
+
+mod_LT_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("b_tmp")) %>% 
+   apply(., 2, quantile, probs = c(0.5, 0.025, 0.975)) %>% exp() %>% 
+  t() %>% as.data.frame() 
+
+
+
+mod_LT_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("b_tmp")) %>% 
+   apply(., 2, mean)
+
+mod_LT_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("b_tmp")) %>% 
+   apply(., 2, sd)
+
+```
+
+## B2. A model with spatially varying temperature
+
+In the context of temperature and health, we expect spatial vulnerabilities on the effect of heat. This is due to known (green space, deprivation, air-pollution) or unknown spatial factors that interact with temperature. In this section, we will fit a model with spatially varying temperature coefficients, capturing the spatial vulnerabilities to heat exposure. The mathematical notation is very similar with B1:
+
+\begin{equation}
+\begin{aligned}
+\hbox{O}_{itw} & \sim \hbox{Poisson}(E_{it} \lambda_{itw}) \\
+\log \lambda_{itw} & = \beta_0 +  \beta_1 X_{1itw} + \beta_2 X_{2itw} + \sum_{j=2}^5\beta_{3j} X_{3tw} + \\ & \beta_{41}X_{4itw}I(X_{4itw} \leq c) + \beta_{42i}X_{4itw}I(X_{4itw} > c) + \\
+& u_{tw} + \theta_{1i} + \phi_{1i}\\
+\beta_{42i} & = \beta_{420} + \theta_{2i} + \phi_{2i} \\
+u_{tw}  & \sim \hbox{RW1}(0, \sigma^2_{u})\\
+\theta_{1i} &\sim \hbox{Normal}(0, \sigma^2_{\theta_1})\\
+{\bf \phi_1} & \sim \hbox{ICAR}({\bf W}, \sigma_{\phi_1}^2) \,\, ,  \sum_i \phi_i  = 0 \\
+\theta_{2i} &\sim \hbox{Normal}(0, \sigma^2_{\theta_{2}})\\
+{\bf \phi_2} & \sim \hbox{ICAR}({\bf W}, \sigma_{\phi_{2}}^2) \,\, ,  \sum_i \phi_i  = 0 \\
+\end{aligned}
+\end{equation}
+
+The only difference from the model in B1 is that here the effect of higher temperatures $\beta_{42i}$ has an $i$ index, i.e. is allowed to vary in space, based on a BYM prior.
+
+
+```{r}
+model_svc <- nimbleCode(
+  {
+    for(i in 1:N){
+      
+      O[i] ~ dpois(mu[i])
+      mu[i] <- exp(log(expected[i]) + beta_0 + 
+                     beta_tmp[i]*temperature[i] +                              # effect of temperature
+                     inprod(beta[1:K.b], X[i,1:K.b]) +                         # covariates
+                     w[IDW[i]] +                                               # adjust for temporal trends
+                     b_1[IDSP[i]])                                             # adjust for spatial trends
+      
+      Q[i] <- step(temperature[i] - x.change)
+      beta_tmp[i] <- (1 - Q[i])*b_tmp_low + Q[i]*b_tmp_highSVC[IDSP[i]]
+    }
+    
+    # Latent field
+    for(j in 1:J){
+      # For the unknown spatial confounding 
+      b_1[j] <- (1/sqrt(tau.b_1))*(sqrt((1-rho_1))*theta_1[j] + 
+                               sqrt(rho_1/scale)*phi_1[j])
+      theta_1[j] ~ dnorm(0, sd = 1)  
+      
+      # for the spatially varying coefficient
+      b_tmp_highSVC[j] <- b_tmp_high + b_2[j]
+      b_2[j] <- (1/sqrt(tau.b_2))*(sqrt((1-rho_2))*theta_2[j] + 
+                               sqrt(rho_2/scale)*phi_2[j])
+      
+      theta_2[j] ~ dnorm(0, sd = 1)
+    }
+    
+    phi_1[1:J] ~ dcar_normal(adj = adj[1:L], weights = weights[1:L], num = num[1:J], tau = 1, zero_mean = 1) 
+    phi_2[1:J] ~ dcar_normal(adj = adj[1:L], weights = weights[1:L], num = num[1:J], tau = 1, zero_mean = 1)
+  
+    # The random walk for week 
+    w[1:Jw] ~ dcar_normal(adj = adjw[1:Lw], weights = weightsw[1:Lw], num = numw[1:Jw], 
+                        tau = tau.w, c = 2, zero_mean = 1) 
+    
+    # set the priors of the fixed effects
+    # intercept/covariates
+    beta_0 ~ dflat() 
+    # days of week
+    for(kb in 1:K.b){
+      beta[kb] ~ dnorm(0, sd = 1)
+    }
+    
+    # to help convergence I can use the posteriors of the previous models as priors here
+    b_tmp_low_unscaled ~ dnorm(0.009608378, sd = 0.002509800) 
+    b_tmp_low <- b_tmp_low_unscaled*x.sd
+    
+    b_tmp_high_unscaled ~ dnorm(0.058747171, sd = 0.002662397) 
+    b_tmp_high <- b_tmp_high_unscaled*x.sd
+
+        
+    # set the priors of the hyperparameters 
+    # The spatial field
+    sd.b_1 ~ dgamma(shape = 1, rate = 2)
+    tau.b_1 <- 1/(sd.b_1*sd.b_1)
+    rho_1 ~ dbeta(1, 1)  
+    
+    # the svc
+    sd.b_2 ~ dgamma(shape = 1, rate = 2)
+    tau.b_2 <- 1/(sd.b_2*sd.b_2)
+    rho_2 ~ dbeta(1, 1)  
+    
+    # The random walk
+    sd.w ~ dgamma(shape = 1, rate = 4) 
+    tau.w <- 1/(sd.w*sd.w)
+    
+  }
+)
+```
+
+* modify parameters and initials
+```{r}
+
+# Initials
+
+initials$b_tmp_low <- initials$b_tmp_high <- NULL
+c(initials, 
+  list(
+  b_tmp_low_unscaled = 0.009608378,
+  b_tmp_high_unscaled = 0.058747171,
+  theta_2 = rep(0, times = J),
+  phi_2 = rep(0, times = J),
+  sd.b_2 = 1, 
+  rho_2 = 0.5)) -> initialssvc
+
+# parameters to monitor
+c(parameters, "b_2", "sd.b_2", "rho_2") -> parametersvsc
+  
+```
+
+* and run NIMBLE
+```{r eval = FALSE}
+# NIMBLE call
+
+# define the model
+t_0 <- Sys.time()
+nimble_model <- nimbleModel(
+  code = model_svc,
+  data = NIMBLE_data,
+  constants = NIMBLE_constants,
+  inits = initialssvc,
+  name = "model_svc",
+  calculate = FALSE
+)
+
+nimble_model$initializeInfo()
+
+# compile model
+Cmodel <- compileNimble(nimble_model)
+Cmodel$calculate()
+
+nimble_model$origInits
+
+# configure and build the MCMC
+conf <- configureMCMC(nimble_model, monitors = parametersvsc)
+MCMC <- buildMCMC(conf)
+
+# compile the MCMC
+cMCMC <- compileNimble(MCMC, project = Cmodel)
+t_1 <- Sys.time()
+t_1 - t_0 # ~ 30 minutes
+
+
+
+# MCMC setting
+
+ni <- 50000   # nb iterations
+nt <- 25      # thinning interval
+nb <- 25000   # nb iterations as burn-in
+nc <- 1       # nb chains
+
+
+# run the MCMC
+t_0 <- Sys.time()
+mod_svc_res <- runMCMC(cMCMC, niter = ni, nburnin = nb, thin = nt, samples = TRUE, summary = FALSE)
+t_1 <- Sys.time()
+t_1 - t_0
+
+saveRDS(mod_svc_res, file = "NIMBLE_SVC_B2")
+```
+
+```{r echo = FALSE}
+mod_svc_res <- readRDS("NIMBLE_SVC_B2")
+```
+
+* Check convergence
+```{r fig.width=10}
+
+plot(mod_svc_res[,"b_tmp_low_unscaled"], type = "l")
+plot(mod_svc_res[,"b_tmp_high_unscaled"], type = "l")
+
+```
+
+```{r eval = FALSE}
+
+plot(mod_svc_res[,"beta[1]"], type = "l")
+plot(mod_svc_res[,"beta[2]"], type = "l")
+plot(mod_svc_res[,"beta[3]"], type = "l")
+plot(mod_svc_res[,"beta[4]"], type = "l")
+plot(mod_svc_res[,"beta[5]"], type = "l")
+plot(mod_svc_res[,"beta[6]"], type = "l")
+plot(mod_svc_res[,"beta[7]"], type = "l")
+plot(mod_svc_res[,"beta[8]"], type = "l")
+plot(mod_svc_res[,"beta[9]"], type = "l")
+
+plot(mod_svc_res[,"rho_1"], type = "l")
+plot(mod_svc_res[,"sd.b_1"], type = "l")
+
+plot(mod_svc_res[,"tau.w"], type = "l")
+
+plot(mod_svc_res[,"b_1[1]"], type = "l")
+plot(mod_svc_res[,"b_1[13]"], type = "l")
+plot(mod_svc_res[,"b_1[90]"], type = "l")
+
+plot(mod_svc_res[,"w[1]"], type = "l")
+plot(mod_svc_res[,"w[10]"], type = "l")
+plot(mod_svc_res[,"w[15]"], type = "l")
+
+plot(mod_svc_res[,"b_2[1]"], type = "l")
+plot(mod_svc_res[,"b_2[13]"], type = "l")
+plot(mod_svc_res[,"b_2[90]"], type = "l")
+
+```
+
+* Examine the effects of the temperature:
+```{r fig.width=8}
+
+mod_svc_res %>% 
+  as_tibble() %>% 
+  dplyr::select(starts_with("b_2")) %>% 
+   apply(., 2, quantile, probs = c(0.5, 0.025, 0.975)) %>% exp() %>% 
+  t() %>% as.data.frame() -> restemp
+
+mean(restemp$`50%`)
+
+shp_italy$SVC <- restemp$`50%`
+
+ggplot(data=shp_italy) + 
+  geom_sf(aes(fill = SVC)) + 
+  scale_fill_viridis_c(option = "A")
+
+```

@@ -1,0 +1,24 @@
+name: check-pre-commit-hooks
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: r-lib/actions/setup-r@v2
+      with:
+        use-public-rspm: true
+    - name: install and run pre-commit hooks
+      run: |
+        python -m pip install pre-commit
+        python -m pip freeze --local
+        pre-commit install
+        pre-commit run --all-files --show-diff-on-failure --color=always
+      shell: bash

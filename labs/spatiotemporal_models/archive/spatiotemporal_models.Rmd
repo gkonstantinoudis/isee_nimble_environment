@@ -1,0 +1,687 @@
+---
+title: "Spatial and Spatio-temporal Modelling"
+subtitle: "SHARP Bayesian Modeling for Environmental Health Workshop"
+author: "Garyfallos Konstantinoudis"
+date: "August 2023"
+output: html_document
+---
+
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+library(here)
+library(tidyverse)
+library(nimble)
+library(sf)
+library(rgeos)
+library(patchwork)
+library(coda)
+library(ggmcmc)
+library(spdep)
+
+extrafont::loadfonts()
+theme_set(hrbrthemes::theme_ipsum())
+
+set.seed(2)
+```
+
+# Part A: COVID-19 deaths in England
+
+In Part A of this practical you will be using the R software Statistical Package (www.r-project.org), as well as NIMBLE to carry out a disease mapping using study. You will use the COVID-19 deaths during March-July 2020, in England, at the LTLA geographical level (317 areas). 
+
+
+## A1. Visualization of spatial areal data
+
+```{r}
+data_england <- read_sf(here("data", "England", "COVIDecoregression.shp"))
+glimpse(data_england)
+summary(data_england)
+class(data_england)
+```
+The shapefile could be also imported using the function `readOGR` of the package `rgdal` (Geospatial Data Abstraction Library), such as `data_england <- readOGR(dsn = mypath, layer = "data_england")`, where the `dsn` argument specifies the data source name and `mypath` is the path where the file is stored. Then to convert `sp` object to `sf` object, we can use `st_as_sf` function, e.g. `data_england <- st_as_sf(data_england)`. This is not encouraged as the `rgdal` will be deprecated. 
+
+
+We can create basic maps of sf objects using the `plot()` function:
+
+```{r eval=FALSE}
+# the default plot of an sf object is a multi-plot of all attributes
+
+plot(data_england)          # plot all the attributes
+plot(data_england$geometry) # plot only the boundaries
+```
+ We can do nicer plots using the package `ggplot2`. First let's reduce the resolution to get quicker maps. 
+```{r fig.width=3, fig.align='center'}
+data_england_simpler <- gSimplify(as(data_england, "Spatial"), tol = 500)
+data_england_simpler <- st_as_sf(data_england_simpler)
+data_england_simpler <- cbind(data_england_simpler, data_england %>% mutate(geometry = NULL))
+
+ggplot() + 
+      geom_sf(data = data_england_simpler, color = "red", fill = "white") + 
+      ggtitle("Map of LTLAs in England") + 
+      coord_sf() +    #axis limits and CRS
+      labs(x = "Longitude", y = "Latitude", fill = "") +
+      theme_bw() +    # dark-on-light theme
+      theme(axis.title = element_text(size = 16),
+            axis.text = element_text(size = 14))
+```
+
+And for nicer maps for the other columns:
+```{r fig.width=10}
+
+ggplot() + 
+      geom_sf(data = data_england_simpler, aes(fill = deaths)) + 
+      ggtitle("COVID-19 deaths") + 
+      theme_bw() + scale_fill_viridis_c(option = "A")|
+  ggplot() + 
+      geom_sf(data = data_england_simpler, aes(fill = expectd)) + 
+      ggtitle("Expected number of deaths") + 
+      theme_bw() + scale_fill_viridis_c(option = "D")|
+  ggplot() + 
+      geom_sf(data = data_england_simpler, aes(fill = deaths/expectd)) + 
+      ggtitle("Standardised mortality ratio") + 
+      theme_bw() + scale_fill_viridis_c(option = "B", name = "SMR")
+
+# and the covariates
+ggplot() + 
+      geom_sf(data = data_england_simpler, aes(fill = TtlICUB)) + 
+      ggtitle("Total ICU beds") + 
+      theme_bw() + scale_fill_viridis_c(option = "A")|
+  ggplot() + 
+      geom_sf(data = data_england_simpler, aes(fill = NO2)) + 
+      ggtitle("NO2") + 
+      theme_bw() + scale_fill_viridis_c(option = "D")|
+  ggplot() + 
+      geom_sf(data = data_england_simpler, aes(fill = IMD)) + 
+      ggtitle("IMD") + 
+      theme_bw() + scale_fill_viridis_c(option = "B")
+```
+
+## A2. A model with an unstructed spatial component
+
+The RRs will be smoothed using the Poisson-logNormal model. The inference is done with NIMBLE called through R. 
+In particular, let each area $i$ be indexed by  the integers $1, 2,...,N$. The model is as follows:
+\[
+\begin{eqnarray}
+O_{i}|\lambda_{i}  & \sim & \text{Poisson}(\lambda_{i}E_{i} )  \\
+\log(\lambda_{i}) & = & \alpha + \theta_{i}  \\
+\theta_{i} & \sim & N(0,1/\tau_{\theta})
+\end{eqnarray}
+\]
+
+where $\tau_{\theta}$ is a precision (reciprocal of the variance) term that controls the magnitude of $\theta_{i}$. We will first write the model in NIMBLE. Specify the prior of $\tau_{\theta}$ in the code below. You can try a Gamma with parameters 1 and 0.01
+
+```{r eval=TRUE, echo = TRUE}
+UnstrCode <- nimbleCode(
+{
+  for (i in 1:N){
+    
+    O[i] ~ dpois(mu[i])                                # Poisson likelihood for observed counts 
+    log(mu[i]) <- log(E[i]) + alpha + theta[i] 
+    
+    theta[i] ~ dnorm(0, tau = tau.theta) 			         # area-specific RE
+    RR[i] <- exp(alpha + theta[i])		                 # area-specific RR
+    resRR[i] <- exp(theta[i]) 			                   # area-specific residual RR
+    e[i] <- (O[i]-mu[i])/sqrt(mu[i])     	             # residuals      
+  } 
+  
+  # Priors:
+  alpha ~ dnorm(0, tau = 0.00001)                      # vague prior (small precision=large variance) 
+  overallRR <- exp(alpha)                              # overall RR across study region
+        
+  tau.theta ~ dgamma(1, 0.01)                          # prior for the precision hyperparameter
+}
+
+)
+```
+
+
+* Create data object as required for NIMBLE
+```{r eval=TRUE}
+# Obtain the number of LTLAs
+n.LTLA <- dim(data_england_simpler)[1] 
+
+# Format the data for NIMBLE in a list
+COVIDdata = list(
+                  O = data_england_simpler$deaths         # observed nb of deaths
+)
+
+COVIDConsts <-list(
+                 N = n.LTLA,                              # nb of LTLAs   
+                 E = data_england_simpler$expectd         # expected number of deaths
+                   
+)
+  
+```
+
+
+What are the parameters to be initialised? Create a list with two elements and call it `inits` (each a list) with different initial values for the parameters:
+```{r eval=TRUE, echo=FALSE}
+# Initialise the unknown parameters, 2 chains
+inits <- list(
+  list(alpha=0.01, tau.theta=10, theta = rep(0.01,times=n.LTLA)),  # chain 1
+  list(alpha=0.5, tau.theta=1, theta = rep(-0.01,times=n.LTLA)))   # chain 2
+```
+
+
+Set `params` a vector to monitor alpha, theta, tau.theta, overallRR, resRR, e and mu:
+```{r eval=TRUE, echo = FALSE}
+# Monitored parameters
+params <- c("alpha","theta", "tau.theta", "overallRR", "resRR", "RR", "e", "mu")
+```
+Note that the parameters that are not set, will NOT be monitored!
+
+* Specify the MCMC setting:
+```{r eval=TRUE}
+# MCMC setting
+ni <- 50000  # nb iterations 
+nt <- 100    # thinning interval
+nb <- 30000  # nb iterations as burn-in 
+nc <- 2      # nb chains
+```
+
+The burn-in should be long enough to discard the initial part of the Markov chains that have not yet converged to the stationary distribution.
+
+* Run the MCMC simulations calling Nimble from R using the function `nimbleMCMC()`
+```{r eval=FALSE, message=FALSE, warning=FALSE}
+t_0 <- Sys.time()
+samples <- nimbleMCMC(code = UnstrCode,
+                      data = COVIDdata,
+                      constants = COVIDConsts, 
+                      inits = inits,
+                      monitors = params,
+                      niter = ni,
+                      nburnin = nb,
+                      thin = nt, 
+                      nchains = nc, 
+                      setSeed = 9, 
+                      progressBar = FALSE, 
+                      samplesAsCodaMCMC = TRUE, 
+                      summary = TRUE, 
+                      WAIC = TRUE
+                      )
+t_1 <- Sys.time()
+t_1 - t_0 # ~ 2minutes
+saveRDS(samples, file = "NIMBLE_IDD_A1")
+```
+
+```{r echo = FALSE}
+samples <- readRDS("NIMBLE_IDD_A1")
+```
+
+Note that specifying `samplesAsCodaMCMC = FALSE`, the function `nimbleMCMC()` returns a list object (if `codaPkg = TRUE`, file names of NIMBLE output are returned for easy access by the coda package). 
+
+* Summarize posteriors from `samples`:
+```{r eval=TRUE, results="hide"}
+
+head(samples$summary$chain1, digits = 3)
+head(samples$summary$chain2, digits = 3)
+head(samples$summary$all.chains, digits = 3)
+# also
+samples$summary$chain2[c(1, 2, 3, 7),]
+# or
+samples$summary$chain2["tau.theta",]
+
+```
+
+* You can produce the summary statistics of all the monitored parameters also typing
+```{r eval=TRUE, results="hide"}
+apply(samples$samples$chain1, 2, mean)
+apply(samples$samples$chain1, 2, sd)
+# also
+mean(samples$samples$chain1[,"tau.theta"])
+sd(samples$samples$chain1[,"tau.theta"])
+```
+
+* You can also check the 95\% credible intervals of the posterior distribution of the overall relative risk and the 90\% credible intervals of the posterior distribution of $\tau$ hyperparameter
+```{r eval=TRUE}
+# 95% CI
+quantile(samples$samples$chain1[,"overallRR"], 
+         probs = c(0.025, 0.975)) 
+# 90% CI
+quantile(samples$samples$chain1[,"tau.theta"], 
+         probs = c(0.05, 0.95))  
+```
+
+### Check the convergence
+We expect the chains to eventually converge to the stationary distribution. However, there is no guarantee that the chains have converged after a number of draws. 
+There is a combination of several standard ways to check convergence. Here some useful tools.
+
+* *The Gelman-Rubin diagnostic (Rhat)*
+The Gelman-Rubin diagnostic evaluates MCMC convergence by analyzing the difference between multiple Markov chains. The convergence is assessed by comparing the estimated between-chains and within-chain variances for each model parameter. Large differences between these variances indicate nonconvergence.
+Indeed, from the summary statistics, we saw displayed the *potential scale reduction factor (psrf)* or *Rhat*.  
+When the scale reduction factor is high (perhaps greater than 1.1), then we should run our chains out longer to improve convergence to the stationary distribution.
+
+You can use the function `gelman.diag()` in the package `coda` to calculate the *Rhat*. Notice that if the option `samplesAsCodaMCMC` is set to false you cannot use this function. 
+```{r eval=TRUE}
+GR.diag <- gelman.diag(samples$samples, multivariate = FALSE)
+all(GR.diag$psrf[,"Point est."] < 1.1) 
+# which(GR.diag$psrf[,"Point est."] > 1.1) 
+```
+
+The *Rhat* of the overallRR is slightly higher than 1.1. We can think of running more samples (setting ni to 8000 will do). We should also check the traceplots.
+
+* *Diagnostic plots*
+The most straightforward approach for assessing convergence is based on simply plotting and inspecting traces, histograms, autocorrelation of the observed MCMC sample. For models with many parameters it is not practical to check the convergence for every parameter, so a choice should be made of the relevant parameters to monitor. In this way the convergence of the NIMBLE output can be assessed with a reasonable degree of confidence. 
+
+We can use the `ggmcmc` package for diagnostics plots
+
+* First, create the `ggs` object and name it `ggsamples`. Note that you need to access the samples of the `samples` object. You do this using the dollar sign:
+```{r eval = TRUE}
+ggsamples <- ggs(samples$samples)
+ggsamples
+```
+
+Use the function `ggs_traceplot()` to get the traceplot of the different chains for `tau.theta`:
+```{r eval = FALSE}
+ggsamples %>% filter(Parameter == "tau.theta") %>% 
+              ggs_traceplot() + theme_bw()
+```
+
+Use the function `ggs_autocorrelation()` to get the autocorrelation plots for the different chains for `tau.theta`:
+```{r eval = FALSE}
+ggsamples %>% filter(Parameter == "tau.theta") %>% 
+              ggs_autocorrelation() + theme_bw()
+```
+
+Use the functions `ggs_histogram()` and `ggs_density()` to get the histogram and the density plots of the posterior `tau.theta` 
+```{r eval = TRUE}
+ggsamples %>% filter(Parameter == "tau.theta") %>% 
+              ggs_histogram() + theme_bw() -> p1
+ggsamples %>% filter(Parameter == "tau.theta") %>% 
+              ggs_density() + theme_bw() -> p2
+
+p1
+p2
+```
+
+* To see the WAIC 
+```{r eval=TRUE}  
+samples$WAIC
+```	
+
+### Map of the (globally) smoothed RRs
+
+* To map the smoothed RRs in R we extract the posterior mean of the relative risks
+```{r eval=TRUE} 
+
+RR_COVID <- samples$summary$all.chains[paste0("RR[", 1:n.LTLA, "]"), "Median"] # posterior median
+
+```	
+
+* Add it on the shapefile
+```{r eval=TRUE} 
+data_england_simpler$RR <- RR_COVID
+```	
+
+* Using `ggplot2`, we can produce a map of the smoothed RRs
+```{r eval=TRUE, fig.width=5, fig.align='center'} 
+
+ggplot() + geom_sf(data = data_england_simpler, aes(fill = RR)) + theme_bw() + 
+                     scale_fill_viridis_c(limits = c(0,2)) 
+```	
+
+## A3. A more complex model
+
+Let $\mathcal{D}$ be the observation window of England and $A_1, A_2, \dots, A_N$ a partition denoting the LTLAs in England with $\cup_{i=1}^NA_i = \mathcal{D}$ and $A_i\cap A_j$ for every $i\neq j$. Let $O_1, O_2, \dots, O_N$ be the observed number of COVID-19 deaths occurred during March-July 2020 in England, $E_1, E_2, \dots, E_N$ is the expected number of COVID-19 deaths and $\lambda_1, \lambda_2, \dots, \lambda_N$ the standardized mortality ratio (recall $\lambda_i = \frac{O_i}{E_i}$). A standardized mortality ratio of $1.5$ implies that the COVID-19 deaths we observed in the $i$-th area are $1.5$ times higher to what we expected. Under the Poisson assumption we have:
+  
+  \begin{equation}
+\begin{aligned}
+\hbox{O}_i & \sim \hbox{Poisson}(E_i \lambda_i); \;\;\; i=1,...,N\\
+\log \lambda_i & = \alpha +  \beta_1 X_{1i} + \beta_2 X_{2i} + \theta_i + \phi_i\\
+\text{residual RR}_i &= \exp(\theta_i + \phi_i)\\
+\theta_i &\sim \hbox{Normal}(0, \sigma^2_{\theta_i})\\
+{\bf \phi} & \sim \hbox{ICAR}({\bf W}, \sigma_{\phi}^2) \,\, ,  \sum_i \phi_i  = 0 \\
+\alpha & \sim \text{Uniform}(-\infty, +\infty) \\
+\beta_1, \beta_2 & \sim \mathcal{N}(0, 10) \\
+1/\sigma_{\theta}^2 & \sim \hbox{Gamma}(0.5, 0.05) \\
+1/\sigma_{\phi}^2 & \sim \hbox{Gamma}(0.5, 0.0005) \\
+\end{aligned}
+\end{equation}
+
+the terms $\beta_1 X_{1i} + \beta_2 X_{2i} + \sum_{j=2}^5\beta_{3j} X_{3i}$, where $X_{1i}, X_{2i}, X_{3i}$ are the ICU beds, NO$_2$ and IMD in the $i$-th LTLA, $\beta_1, \beta_2, \sum_{j=2}^5\beta_{3j}$ the corresponding effects and $exp(\beta_1), exp(\beta_2)$ the relative risk of ICU beds or NO$_2$ for every unit increase and of the ICU beds or NO$_2$. For instance $exp(\beta_2) = 1.8$ means that for every unit increase of long term exposure to $NO_2$, the risk (read standardized mortality ratio) of COVID-19 deaths cancer increases by $80\%$. $exp(\beta_{32}), \beta_{33}, \beta_{34}, \beta_{35}$ are the relative risks compared to the baseline IMD category, ie the most deprived areas. An $exp(\beta_{35}) = 0.5$ means that the risk of COVID-19 deaths in most affluent areas decreases by $50%$ compared to the most deprived areas.$\tau_{\theta}$ is a precision (reciprocal of the variance) term that controls the magnitude of $\theta_{i}$. We will first write the model in NIMBLE. 
+
+```{r eval=TRUE, echo = TRUE}
+BYMCode <- nimbleCode(
+  {
+    for (i in 1:N){
+      
+      O[i] ~ dpois(mu[i])                                      # Poisson likelihood for observed counts 
+      log(mu[i]) <- log(E[i]) + alpha + theta[i] + phi[i] + beta1*X1[i] + beta2*X2[i]                          
+      
+      theta[i] ~ dnorm(0, tau = tau.theta) 			          # area-specific RE
+      RR[i] <- exp(alpha + theta[i] + phi[i])		          # area-specific RR
+      resRR[i] <- exp(theta[i] + phi[i]) 			            # area-specific residual RR
+      e[i] <- (O[i]-mu[i])/sqrt(mu[i])     	              # residuals  
+      proba.resRR[i]<-step(resRR[i]-1)                    # Posterior probability
+    } 
+    
+    # BYM prior
+    phi[1:N] ~ dcar_normal(adj = adj[1:L], weights = weights[1:L], num = num[1:N], tau = tau.phi, zero_mean = 1)
+    
+    # Priors
+    alpha ~ dflat()                                       # vague prior (Unif(-inf, +inf)) 
+    overallRR <- exp(alpha)                               # overall RR across study region
+    
+    tau.theta ~ dgamma(0.5, 0.05)                         # prior for the precision hyperparameter
+    sigma2.theta <- 1/tau.theta                           # variance of unstructured area random effects
+    
+    tau.phi ~ dgamma(0.5, 0.0005)                         # prior on precison of spatial area random effects
+    sigma2.phi <- 1/tau.phi                               # conditional variance of spatial area random effects
+    
+    # priors for the fixed effects
+    beta1 ~ dnorm(0, tau = 0.01)
+    RR.beta1 <- exp(beta1)
+    
+    beta2 ~ dnorm(0, tau = 0.01)
+    RR.beta2 <- exp(beta2)
+  }
+)
+```
+
+
+### Creating the adjacency matrix
+
+To run the BYM model, the adjacency matrix needs to be provided. Recall that there are many ways of defining an adjacency matrix ${\bf W}$. Here we will use queen contiguity which is defined as:
+\begin{equation}
+w_{ij} = 
+\begin{cases} 
+1 & \text{if } j \in \partial_i  \\
+0         & \text{otherwise}
+\end{cases}
+\end{equation}
+where $\partial_i$ is the set of area adjacent to $i$, and $w_{ij}$ is the $ij$ element of ${\bf W}$. 
+
+
+### Adjacency matrix in R
+
+Convert the polygons to a list of neighbors using the function `poly2nb()`. 
+
+```{r eval=TRUE, echo=TRUE, message=FALSE, warning=FALSE}
+
+LTLA_nb <- poly2nb(pl = data_england_simpler)
+LTLA_nb
+# extract centroids from the England shp
+centr <- st_centroid(data_england_simpler) %>% st_geometry()
+# and plot the links
+par(mar = c(0,0,0,0))
+plot(data_england_simpler$geometry, border = "grey66")
+plot(LTLA_nb, centr, pch = 19, cex = .5, add = T)
+```
+
+Convert the list you defined previously to NIMLE format (i.e. a list of 3 components adj, num and weights) using the function `nb2WB()` and print a summary of the object.
+```{r echo=TRUE, eval=TRUE}
+nbWB_A <- nb2WB(nb = LTLA_nb)
+names(nbWB_A)  
+# a list of three components is created: 
+# adj = ID for all the neighbors; weights = the weight for each neighbour; num: total nb of neighbors across the study region
+```
+
+Create data object as required for NIMBLE
+```{r eval=TRUE}
+n.LTLA <- dim(data_england_simpler)[1]
+
+# Format the data for NIMBLE in a list
+COVIDdata = list(
+  O = data_england_simpler$deaths,                        # observed nb of deaths
+  
+  # covariates
+  X1 = scale(data_england_simpler$TtlICUB)[,1],           # ICU beds
+  X2 = data_england_simpler$NO2                           # NO2
+  
+  
+)      
+
+COVIDConsts <-list(      
+  N = n.LTLA,                                   # nb of LTLAs
+  
+  # adjacency matrix
+  L = length(nbWB_A$weights),                   # the number of neighboring areas
+  E = data_england_simpler$expectd,             # expected number of deaths
+  adj = nbWB_A$adj,                             # the elements of the neighbouring matrix
+  num = nbWB_A$num,
+  weights = nbWB_A$weights
+)
+
+
+```
+
+
+Create the initial values for ALL the unknown parameters. As usual, create two different chains. Fill the list below with sensible initial values.
+```{r echo=TRUE, eval=TRUE}
+# initialise the unknown parameters, 2 chains
+inits <- list(
+  list(alpha = 0.01,
+       beta1 = 0,
+       beta2 = 0,
+       tau.theta = 10,
+       tau.phi = 1,
+       theta = rep(0.01, times = n.LTLA), 
+       phi = c(rep(0.5, times = n.LTLA))
+       ),
+  list(alpha = 0.5,
+       beta1 = -1,
+       beta2 = -1,
+       tau.theta = 1,
+       tau.phi = 0.1,
+       theta = rep(0.05, times = n.LTLA),
+       phi = c(rep(-0.05, times = n.LTLA))
+       )
+)
+```
+
+
+Which model parameters do you want to monitor? Set these before running NIMBLE Call this object *params*.
+```{r echo=TRUE, eval=TRUE}
+params <- c("sigma2.theta", "sigma2.phi","overallRR", "RR", "theta", "beta1", "beta2", "RR.beta1", "RR.beta2", "resRR", "proba.resRR", "alpha")
+
+```
+
+Specify the MCMC setting
+```{r echo=TRUE, eval=TRUE}
+ni <- 500000  #nb iterations 
+nt <- 100     #thinning interval
+nb <- 100000  #nb iterations as burning
+nc <- 2       #nb chains
+```
+
+
+Run the MCMC simulations calling NIMBLE from R using the function `nimbleMCMC()`. If everything is specified reasonably, this needs approximately 30 minutes. 
+```{r echo=TRUE, eval=FALSE}
+t0<- Sys.time()
+modelBYM.sim <- nimbleMCMC(code = BYMCode,
+                      data = COVIDdata,
+                      constants = COVIDConsts, 
+                      inits = inits,
+                      monitors = params,
+                      niter = ni,
+                      nburnin = nb,
+                      thin = nt, 
+                      nchains = nc, 
+                      setSeed = 9, 
+                      progressBar = FALSE, 
+                      samplesAsCodaMCMC = TRUE, 
+                      summary = TRUE, 
+                      WAIC = TRUE
+                      )
+t1<- Sys.time()
+t1 - t0
+saveRDS(modelBYM.sim, file = "NIMBLE_BYM_A3")
+```
+
+```{r echo=TRUE, eval=TRUE}
+modelBYM.sim <- readRDS("NIMBLE_BYM_A3")
+```
+
+Retrieve WAIC and compare with previous model. Which model performs best?
+```{r echo=TRUE, eval=TRUE}
+modelBYM.sim$WAIC
+```
+
+Check the convergence of the covariates NO2 and ICU beds. What do you observe?
+```{r echo=TRUE, eval=TRUE}
+ggsamplesbym <- ggs(modelBYM.sim$samples)
+
+ggsamplesbym %>% filter(Parameter == c("alpha", "beta1", "beta2")) %>% 
+              ggs_traceplot() + theme_bw()
+
+```
+
+Retrieve summary statistics for the two covariates and interpret (it is easier to interpret on the relative scale):
+```{r echo=TRUE, eval=TRUE}
+modelBYM.sim$summary$all.chains[c("RR.beta1","RR.beta2"),]
+```
+
+(a) Extract the residual RR (i.e. exp(V + U)) and the posterior probability that resRR is higher than 1 as. Create a `data.frame` for this purpose. Note that for the posterior probability, which is a vector of 0s and 1s we need to calculate the sum of 1s by the total sum, ie the mean.
+```{r echo=TRUE, eval=TRUE}
+RR_BYM <- data.frame(RR_BYM = modelBYM.sim$summary$all.chains[paste0("resRR[", 1:n.LTLA, "]"), "Median"],
+                     pp_BYM = modelBYM.sim$summary$all.chains[paste0("proba.resRR[", 1:n.LTLA, "]"), "Mean"], 
+                     SMR_BYM = modelBYM.sim$summary$all.chains[paste0("RR[", 1:n.LTLA, "]"), "Median"])
+```
+
+(b) Add a column ID for each ward, from 1 to `r n.LTLA`, to *RR_BYM*.
+```{r echo=TRUE, eval=TRUE}
+RR_BYM$LTLA <- data_england$LTLA
+```
+  
+(c) Change the name of the column corresponding to the posterior mean to BYM
+```{r echo=TRUE, eval=TRUE}
+colnames(RR_BYM) <- c("BYM", "pp_resRR", "SMR_BYM","LTLA")
+```
+   
+(d) Merge RR_BYM with COVID19Deaths using LTLA as column for merging. Call the new object *COVID19Deaths*:
+```{r echo=TRUE, eval=TRUE}
+COVID19Deaths <- left_join(data_england_simpler, RR_BYM, by = c("LTLA" = "LTLA"))
+```
+
+(e) Map the smoothed residual RR (resRR). You can use the `plot` function or the other tools (`ggplot` or `tmap`) we used last week. Bonus question: Think of categorizing the continuous *BYM* column (an example could be quintiles) and plotting the categories. 
+
+```{r echo=TRUE, eval=TRUE, fig.width=14, warning=FALSE} 
+
+ggplot() + geom_sf(data = COVID19Deaths, aes(fill=BYM)) + # standard map
+  scale_fill_viridis_c(name = "RR")  +  
+  ggtitle("Posterior median RR") + 
+  theme(
+    axis.title.x=element_blank(), # removes xaxis title
+    axis.title.y=element_blank() # removes yaxis title
+  )|
+  ggplot() + geom_sf(data =COVID19Deaths, aes(fill=pp_resRR)) +  
+  scale_fill_viridis_c(name = "Prob")  +  
+  ggtitle("Exceedance probability") + 
+  theme(
+    axis.title.x=element_blank(), # removes xaxis title
+    axis.title.y=element_blank() # removes yaxis title
+  )
+```
+
+
+# Part B: All-cause mortality and temperature in Italy
+
+In Part B of this practical you will be analysing mortality in Italy and quantifying the effect of temperature on all-cause mortality.
+
+* First let's look at the data
+```{r}
+data_italy <- readRDS(here("data", "Italy", "italy_mortality.rds"))
+glimpse(data_italy)
+summary(data_italy)
+class(data_italy)
+```
+* and the shapefile
+```{r}
+shp_italy <- read_sf(here("data", "Italy", "italy.geojson"))
+glimpse(shp_italy)
+summary(shp_italy)
+class(shp_italy)
+```
+
+## B1. A linear threshold model
+
+Let $\mathcal{D}$ be the observation window of Italy and $A_1, A_2, \dots, A_N$ a partition denoting the regions in Italy with $\cup_{i=1}^NA_i = \mathcal{D}$ and $A_i\cap A_j$ for every $i\neq j$. Let $O_1, O_2, \dots, O_N$ be the observed number of all-cause deaths occurred during March-July 2020 in England, $E_1, E_2, \dots, E_N$ is the expected number of COVID-19 deaths and $\lambda_1, \lambda_2, \dots, \lambda_N$ the standardized mortality ratio (recall $\lambda_i = \frac{O_i}{E_i}$). A standardized mortality ratio of $1.5$ implies that the COVID-19 deaths we observed in the $i$-th area are $1.5$ times higher to what we expected. Under the Poisson assumption we have:
+  
+  \begin{equation}
+\begin{aligned}
+\hbox{O}_i & \sim \hbox{Poisson}(E_i \lambda_i); \;\;\; i=1,...,N\\
+\log \lambda_i & = \alpha +  \beta_1 X_{1i} + \beta_2 X_{2i} + \theta_i + \phi_i\\
+\text{residual RR}_i &= \exp(\theta_i + \phi_i)\\
+\theta_i &\sim \hbox{Normal}(0, \sigma^2_{\theta_i})\\
+{\bf \phi} & \sim \hbox{ICAR}({\bf W}, \sigma_{\phi}^2) \,\, ,  \sum_i \phi_i  = 0 \\
+\alpha & \sim \text{Uniform}(-\infty, +\infty) \\
+\beta_1, \beta_2 & \sim \mathcal{N}(0, 10) \\
+1/\sigma_{\theta}^2 & \sim \hbox{Gamma}(0.5, 0.05) \\
+1/\sigma_{\phi}^2 & \sim \hbox{Gamma}(0.5, 0.0005) \\
+\end{aligned}
+\end{equation}
+
+the terms $\beta_1 X_{1i} + \beta_2 X_{2i} + \sum_{j=2}^5\beta_{3j} X_{3i}$, where $X_{1i}, X_{2i}, X_{3i}$ are the ICU beds, NO$_2$ and IMD in the $i$-th LTLA, $\beta_1, \beta_2, \sum_{j=2}^5\beta_{3j}$ the corresponding effects and $exp(\beta_1), exp(\beta_2)$ the relative risk of ICU beds or NO$_2$ for every unit increase and of the ICU beds or NO$_2$. For instance $exp(\beta_2) = 1.8$ means that for every unit increase of long term exposure to $NO_2$, the risk (read standardized mortality ratio) of COVID-19 deaths cancer increases by $80\%$. $exp(\beta_{32}), \beta_{33}, \beta_{34}, \beta_{35}$ are the relative risks compared to the baseline IMD category, ie the most deprived areas. An $exp(\beta_{35}) = 0.5$ means that the risk of COVID-19 deaths in most affluent areas decreases by $50%$ compared to the most deprived areas.$\tau_{\theta}$ is a precision (reciprocal of the variance) term that controls the magnitude of $\theta_{i}$. We will first write the model in NIMBLE. 
+
+```{r}
+model_SVC <- nimbleCode(
+  {
+    for(i in 1:N){
+      
+      O[i] ~ dpois(mu[i])
+      mu[i] <- exp(log(expected[i]) + beta_0 + 
+                     beta_tmp[i]*temperature[i] +                              # effect of temperature
+                     inprod(beta[1:K.b], X[i,1:K.b]) +                         # covariates
+                     w[IDW[i]] + u[IDY[i]] +                                   # adjust for temporal trends
+                     b_1[IDSP[i]])                                             # adjust for spatial trends
+      
+      Q[i] <- step(temperature[i] - x.change)
+      beta_tmp[i] <- (1 - Q[i])*b_tmp_low + Q[i]*b_tmp_high
+    }
+    
+    # Latent field
+    for(j in 1:J){
+      # For the unknown spatial confounding 
+      b_1[j] <- (1/sqrt(tau.b_1))*(sqrt((1-rho_1))*theta_1[j] + 
+                               sqrt(rho_1/scale)*phi_1[j])
+      theta_1[j] ~ dnorm(0, sd = sd.theta_1)  
+    }
+    
+    phi_1[1:J] ~ dcar_normal(adj = adj[1:L], weights = weights[1:L], num = num[1:J], tau = 1, zero_mean = 1) 
+  
+    # The random walk for week 
+    w[1:Jw] ~ dcar_normal(adj = adjw[1:Lw], weights = weightsw[1:Lw], num = numw[1:Jw], 
+                        tau = tau.w, c = 2, zero_mean = 1) 
+
+    # and iid for the year
+    for(k in 1:K){
+      u[k] ~ dnorm(0, tau = tau.u)
+    }
+    
+    # The changepoint
+    x.change ~ dunif(0.1133, 2.9466)
+    
+    # set the priors of the fixed effects
+    # intercept/covariates
+    beta_0 ~ dnorm(0, sd = 1)
+    # days of week
+    for(kb in 1:K.b){
+      beta[kb] ~ dnorm(0, sd = 1)
+    }
+    
+    b_tmp_low ~ dnorm(0, sd = 1)
+    b_tmp_low_unscaled <- b_tmp_low/x.sd   # scale back
+    b_tmp_high ~ dnorm(0, sd = 1) 
+    b_tmp_high_unscaled <- b_tmp_high/x.sd # scale back
+    
+    # set the priors of the hyperparameters 
+    # The spatial field
+    sd.theta_1 ~ dgamma(shape = 1, rate = 2)
+
+    sd.b_1 ~ dgamma(shape = 1, rate = 2)
+    tau.b_1 <- 1/(sd.b_1*sd.b_1)
+    
+    rho_1 ~ dbeta(1, 1)  
+    
+    # The random walk
+    sd.w ~ dgamma(shape = 1, rate = 4) 
+    tau.w <- 1/(sd.w*sd.w)
+    
+    # The iid
+    sd.u ~ dgamma(shape = 1, rate = 2)
+    tau.u <- 1/(sd.u*sd.u)
+    
+  }
+)
+```
+
+
+

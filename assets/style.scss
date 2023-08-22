@@ -1,0 +1,48 @@
+/*-- scss:defaults --*/
+
+// fonts
+// $font-family-sans-serif: "Palatino Linotype", "Book Antiqua", Palatino,
+//   FreeSerif, serif !default;
+
+// colors
+$body-bg: #fff !default;
+$body-color: #000 !default;
+$link-color: #75cadc !default;
+$selection-bg: #fcb861 !default;
+
+// headings
+// $presentation-heading-font: "Palatino Linotype", "Book Antiqua", Palatino,
+//   FreeSerif, serif !default;
+$presentation-heading-color: #022461 !default;
+
+// title slide
+$presentation-title-slide-text-align: left !default;
+
+/*-- scss:rules --*/
+#title-slide {
+  text-align: left;
+
+  .subtitle,
+  .institute,
+  .quarto-title-affiliation,
+  .quarto-title-author-email {
+    // font-style: italic;
+    // font-size: 80%;
+    color: #8895ba;
+  }
+
+  .author, .quarto-title-author-name {
+    color: $body-color;
+  }
+
+  .quarto-title-authors {
+    display: flex;
+    justify-content: left;
+
+    .quarto-title-author {
+      padding-left: 0em;
+      padding-right: 0em;
+      width: 100%;
+    }
+  }
+}

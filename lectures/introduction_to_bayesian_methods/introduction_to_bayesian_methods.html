@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="introduction_to_bayesian_methods_files/libs/clipboard/clipboard.min.js"></script>
+<script src="introduction_to_bayesian_methods_files/libs/quarto-html/tabby.min.js"></script>
+<script src="introduction_to_bayesian_methods_files/libs/quarto-html/popper.min.js"></script>
+<script src="introduction_to_bayesian_methods_files/libs/quarto-html/tippy.umd.min.js"></script>
+<link href="introduction_to_bayesian_methods_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="introduction_to_bayesian_methods_files/libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="introduction_to_bayesian_methods_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
+<link href="introduction_to_bayesian_methods_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.3.354">
+
+  <meta name="author" content="Robbie M. Parks">
+  <title>Introduction to Bayesian Methods</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="introduction_to_bayesian_methods_files/libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="introduction_to_bayesian_methods_files/libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
+      vertical-align: middle;
+    }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="introduction_to_bayesian_methods_files/libs/revealjs/dist/theme/quarto.css">
+  <link href="introduction_to_bayesian_methods_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-chalkboard/font-awesome/css/all.css" rel="stylesheet">
+  <link href="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-chalkboard/style.css" rel="stylesheet">
+  <link href="introduction_to_bayesian_methods_files/libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+
+  .callout {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    border-radius: .25rem;
+  }
+
+  .callout.callout-style-simple {
+    padding: 0em 0.5em;
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+    display: flex;
+  }
+
+  .callout.callout-style-default {
+    border-left: solid #acacac .3rem;
+    border-right: solid 1px silver;
+    border-top: solid 1px silver;
+    border-bottom: solid 1px silver;
+  }
+
+  .callout .callout-body-container {
+    flex-grow: 1;
+  }
+
+  .callout.callout-style-simple .callout-body {
+    font-size: 1rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-style-default .callout-body {
+    font-size: 0.9rem;
+    font-weight: 400;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-body {
+    margin-top: 0.2em;
+  }
+
+  .callout:not(.callout-titled) .callout-body {
+      display: flex;
+  }
+
+  .callout:not(.no-icon).callout-titled.callout-style-simple .callout-content {
+    padding-left: 1.6em;
+  }
+
+  .callout.callout-titled .callout-header {
+    padding-top: 0.2em;
+    margin-bottom: -0.2em;
+  }
+
+  .callout.callout-titled .callout-title  p {
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+  }
+
+  .callout.callout-titled.callout-style-simple .callout-content  p {
+    margin-top: 0;
+  }
+
+  .callout.callout-titled.callout-style-default .callout-content  p {
+    margin-top: 0.7em;
+  }
+
+  .callout.callout-style-simple div.callout-title {
+    border-bottom: none;
+    font-size: .9rem;
+    font-weight: 600;
+    opacity: 75%;
+  }
+
+  .callout.callout-style-default  div.callout-title {
+    border-bottom: none;
+    font-weight: 600;
+    opacity: 85%;
+    font-size: 0.9rem;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-default div.callout-content {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+  }
+
+  .callout.callout-style-simple .callout-icon::before {
+    height: 1rem;
+    width: 1rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 1rem 1rem;
+  }
+
+  .callout.callout-style-default .callout-icon::before {
+    height: 0.9rem;
+    width: 0.9rem;
+    display: inline-block;
+    content: "";
+    background-repeat: no-repeat;
+    background-size: 0.9rem 0.9rem;
+  }
+
+  .callout-title {
+    display: flex
+  }
+
+  .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  .callout.no-icon::before {
+    display: none !important;
+  }
+
+  .callout.callout-titled .callout-body > .callout-content > :last-child {
+    margin-bottom: 0.5rem;
+  }
+
+  .callout.callout-titled .callout-icon::before {
+    margin-top: .5rem;
+    padding-right: .5rem;
+  }
+
+  .callout:not(.callout-titled) .callout-icon::before {
+    margin-top: 1rem;
+    padding-right: .5rem;
+  }
+
+  /* Callout Types */
+
+  div.callout-note {
+    border-left-color: #4582ec !important;
+  }
+
+  div.callout-note .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEU0lEQVRYCcVXTWhcVRQ+586kSUMMxkyaElstCto2SIhitS5Ek8xUKV2poatCcVHtUlFQk8mbaaziwpWgglJwVaquitBOfhQXFlqlzSJpFSpIYyXNjBNiTCck7x2/8/LeNDOZxDuEkgOXe++553zfefee+/OYLOXFk3+1LLrRdiO81yNqZ6K9cG0P3MeFaMIQjXssE8Z1JzLO9ls20MBZX7oG8w9GxB0goaPrW5aNMp1yOZIa7Wv6o2ykpLtmAPs/vrG14Z+6d4jpbSKuhdcSyq9wGMPXjonwmESXrriLzFGOdDBLB8Y6MNYBu0dRokSygMA/mrun8MGFN3behm6VVAwg4WR3i6FvYK1T7MHo9BK7ydH+1uurECoouk5MPRyVSBrBHMYwVobG2aOXM07sWrn5qgB60rc6mcwIDJtQrnrEr44kmy+UO9r0u9O5/YbkS9juQckLed3DyW2XV/qWBBB3ptvI8EUY3I9p/67OW+g967TNr3Sotn3IuVlfMLVnsBwH4fsnebJvyGm5GeIUA3jljERmrv49SizPYuq+z7c2H/jlGC+Ghhupn/hcapqmcudB9jwJ/3jvnvu6vu5lVzF1fXyZuZZ7U8nRmVzytvT+H3kilYvH09mLWrQdwFSsFEsxFVs5fK7A0g8gMZjbif4ACpKbjv7gNGaD8bUrlk8x+KRflttr22JEMRUbTUwwDQScyzPgedQHZT0xnx7ujw2jfVfExwYHwOsDTjLdJ2ebmeQIlJ7neo41s/DrsL3kl+W2lWvAga0tR3zueGr6GL78M3ifH0rGXrBC2aAR8uYcIA5gwV8zIE8onoh8u0Fca/ciF7j1uOzEnqcIm59sEXoGc0+z6+H45V1CvAvHcD7THztu669cnp+L0okAeIc6zjbM/24LgGM1gZk7jnRu1aQWoU9sfUOuhrmtaPIO3YY1KLLWZaEO5TKUbMY5zx8W9UJ6elpLwKXbsaZ4EFl7B4bMtDv0iRipKoDQT2sNQI9b1utXFdYisi+wzZ/ri/1m7QfDgEuvgUUEIJPq3DhX/5DWNqIXDOweC2wvIR90Oq3lDpdMIgD2r0dXvGdsEW5H6x6HLRJYU7C69VefO1x8Gde1ZFSJLfWS1jbCnhtOPxmpfv2LXOA2Xk2tvnwKKPFuZ/oRmwBwqRQDcKNeVQkYcOjtWVBuM/JuYw5b6isojIkYxyYAFn5K7ZBF10fea52y8QltAg6jnMqNHFBmGkQ1j+U43HMi2xMar1Nv0zGsf1s8nUsmUtPOOrbFIR8bHFDMB5zL13Gmr/kGlCkUzedTzzmzsaJXhYawnA3UmARpiYj5ooJZiUoxFRtK3X6pgNPv+IZVPcnwbOl6f+aBaO1CNvPW9n9LmCp01nuSaTRF2YxHqZ8DYQT6WsXT+RD6eUztwYLZ8rM+rcPxamv1VQzFUkzFXvkiVrySGQgJNvXHJAxiU3/NwiC03rSf05VBaPtu/Z7/B8Yn/w7eguloAAAAAElFTkSuQmCC');
+  }
+
+  div.callout-note.callout-style-default .callout-title {
+    background-color: #dae6fb
+  }
+
+  div.callout-important {
+    border-left-color: #d9534f !important;
+  }
+
+  div.callout-important .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAEKklEQVRYCcVXTWhcVRS+575MJym48A+hSRFr00ySRQhURRfd2HYjk2SSTokuBCkU2o0LoSKKraKIBTcuFCoidGFD08nkBzdREbpQ1EDNIv8qSGMFUboImMSZd4/f9zJv8ibJMC8xJQfO3HPPPef7zrvvvnvviIkpC9nsw0UttFunbUhpFzFtarSd6WJkStVMw5xyVqYTvkwfzuf/5FgtkVoB0729j1rjXwThS7Vio+Mo6DNnvLfahoZ+i/o32lULuJ3NNiz7q6+pyAUkJaFF6JwaM2lUJlV0MlnQn5aTRbEu0SEqHUa0A4AdiGuB1kFXRfVyg5d87+Dg4DL6m2TLAub60ilj7A1Ec4odSAc8X95sHh7+ZRPCFo6Fnp7HfU/fBng/hi10CjCnWnJjsxvDNxWw0NfV6Rv5GgP3I3jGWXumdTD/3cbEOP2ZbOZp69yniG3FQ9z1jD7bnBu9Fc2tKGC2q+uAJOQHBDRiZX1x36o7fWBs7J9ownbtO+n0/qWkvW7UPIfc37WgT6ZGR++EOJyeQDSb9UB+DZ1G6DdLDzyS+b/kBCYGsYgJbSQHuThGKRcw5xdeQf8YdNHsc6ePXrlSYMBuSIAFTGAtQo+VuALo4BX83N190NWZWbynBjhOHsmNfFWLeL6v+ynsA58zDvvAC8j5PkbOcXCMg2PZFk3q8MjI7WAG/Dp9AwP7jdGBOOQkAvlFUB+irtm16I1Zw9YBcpGTGXYmk3kQIC/Cds55l+iMI3jqhjAuaoe+am2Jw5GT3Nbz3CkE12NavmzN5+erJW7046n/CH1RO/RVa8lBLozXk9uqykkGAyRXLWlLv5jyp4RFsG5vGVzpDLnIjTWgnRy2Rr+tDKvRc7Y8AyZq10jj8DqXdnIRNtFZb+t/ZRtXcDiVnzpqx8mPcDWxgARUqx0W1QB9MeUZiNrV4qP+Ehc+BpNgATsTX8ozYKL2NtFYAHc84fG7ndxUPr+AR/iQSns7uSUufAymwDOb2+NjK27lEFocm/EE2WpyIy/Hi66MWuMKJn8RvxIcj87IM5Vh9663ziW36kR0HNenXuxmfaD8JC7tfKbrhFr7LiZCrMjrzTeGx+PmkosrkNzW94ObzwocJ7A1HokLolY+AvkTiD/q1H0cN48c5EL8Crkttsa/AXQVDmutfyku0E7jShx49XqV3MFK8IryDhYVbj7Sj2P2eBxwcXoe8T8idsKKPRcnZw1b+slFTubwUwhktrfnAt7J++jwQtLZcm3sr9LQrjRzz6cfMv9aLvgmnAGvpoaGLxM4mAEaLV7iAzQ3oU0IvD5x9ix3yF2RAAuYAOO2f7PEFWCXZ4C9Pb2UsgDeVnFSpbFK7/IWu7TPTvBqzbGdCHOJQSxiEjt6IyZmxQyEJHv6xyQsYk//moVFsN2zP6fRImjfq7/n/wFDguUQFNEwugAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-important.callout-style-default .callout-title {
+    background-color: #f7dddc
+  }
+
+  div.callout-warning {
+    border-left-color: #f0ad4e !important;
+  }
+
+  div.callout-warning .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAAETklEQVRYCeVWW2gcVRg+58yaTUnizqbipZeX4uWhBEniBaoUX1Ioze52t7sRq6APio9V9MEaoWlVsFasRq0gltaAPuxms8lu0gcviE/FFOstVbSIxgcv6SU7EZqmdc7v9+9mJtNks51NTUH84ed889/PP+cmxP+d5FIbMJmNbpREu4WUkiTtCicKny0l1pIKmBzovF2S+hIJHX8iEu3hZJ5lNZGqyRrGSIQpq15AzF28jgpeY6yk6GVdrfFqdrD6Iw+QlB8g0YS2g7dyQmXM/IDhBhT0UCiRf59lfqmmDvzRt6kByV/m4JjtzuaujMUM2c5Z2d6JdKrRb3K2q6mA+oYVz8JnDdKPmmNthzkAk/lN63sYPgevrguc72aZX/L9C6x09GYyxBgCX4NlvyGUHOKELlm5rXeR1kchuChJt4SSwyddZRXgvwMGvYo4QSlk3/zkHD8UHxwVJA6zjZZqP8v8kK8OWLnIZtLyCAJagYC4rTGW/9Pqj92N/c+LUaAj27movwbi19tk/whRCIE7Q9vyI6yvRpftAKVTdUjOW40X3h5OXsKCdmFcx0xlLJoSuQngnrJe7Kcjm4OMq9FlC7CMmScQANuNvjfP3PjGXDBaUQmbp296S5L4DrpbrHN1T87ZVEZVCzg1FF0Ft+dKrlLukI+/c9ENo+TvlTDbYFvuKPtQ9+l052rXrgKoWkDAFnvh0wTOmYn8R5f4k/jN/fZiCM1tQx9jQQ4ANhqG4hiL0qIFTGViG9DKB7GYzgubnpofgYRwO+DFjh0Zin2m4b/97EDkXkc+f6xYAPX0KK2I/7fUQuwzuwo/L3AkcjugPNixC8cHf0FyPjWlItmLxWw4Ou9YsQCr5fijMGoD/zpdRy95HRysyXA74MWOnscpO4j2y3HAVisw85hX5+AFBRSHt4ShfLFkIMXTqyKFc46xdzQM6XbAi702a7sy04J0+feReMFKp5q9esYLCqAZYw/k14E/xcLLsFElaornTuJB0svMuJINy8xkIYuL+xPAlWRceH6+HX7THJ0djLUom46zREu7tTkxwmf/FdOZ/sh6Q8qvEAiHpm4PJ4a/doJe0gH1t+aHRgCzOvBvJedEK5OFE5jpm4AGP2a8Dxe3gGJ/pAutug9Gp6he92CsSsWBaEcxGx0FHytmIpuqGkOpldqNYQK8cSoXvd+xLxXADw0kf6UkJNFtdo5MOgaLjiQOQHcn+A6h5NuL2s0qsC2LOM75PcF3yr5STuBSAcGG+meA14K/CI21HcS4LBT6tv0QAh8Dr5l93AhZzG5ZJ4VxAqdZUEl9z7WJ4aN+svMvwHHL21UKTd1mqvChH7/Za5xzXBBKrUcB0TQ+Ulgkfbi/H/YT5EptrGzsEK7tR1B7ln9BBwckYfMiuSqklSznIuoIIOM42MQO+QnduCoFCI0bpkzjCjddHPN/F+2Yu+sd9bKNpVwHhbS3LluK/0zgfwD0xYI5dXuzlQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-warning.callout-style-default .callout-title {
+    background-color: #fcefdc
+  }
+
+  div.callout-tip {
+    border-left-color: #02b875 !important;
+  }
+
+  div.callout-tip .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAADr0lEQVRYCe1XTWgTQRj9ZjZV8a9SPIkKgj8I1bMHsUWrqYLVg4Ue6v9BwZOxSYsIerFao7UiUryIqJcqgtpimhbBXoSCVxUFe9CTiogUrUp2Pt+3aUI2u5vdNh4dmMzOzHvvezuz8xNFM0mjnbXaNu1MvFWRXkXEyE6aYOYJpdW4IXuA4r0fo8qqSMDBU0v1HJUgVieAXxzCsdE/YJTdFcVIZQNMyhruOMJKXYFoLfIfIvVIMWdsrd+Rpd86ZmyzzjJmLStqRn0v8lzkb4rVIXvnpScOJuAn2ACC65FkPzEdEy4TPWRLJ2h7z4cArXzzaOdKlbOvKKX25Wl00jSnrwVxAg3o4dRxhO13RBSdNvH0xSARv3adTXbBdTf64IWO2vH0LT+cv4GR1DJt+DUItaQogeBX/chhbTBxEiZ6gftlDNXTrvT7co4ub5A6gp9HIcHvzTa46OS5fBeP87Qm0fQkr4FsYgVQ7Qg+ZayaDg9jhg1GkWj8RG6lkeSacrrHgDaxdoBiZPg+NXV/KifMuB6//JmYH4CntVEHy/keA6x4h4CU5oFy8GzrBS18cLJMXcljAKB6INjWsRcuZBWVaS3GDrqB7rdapVIeA+isQ57Eev9eCqzqOa81CY05VLd6SamW2wA2H3SiTbnbSxmzfp7WtKZkqy4mdyAlGx7ennghYf8voqp9cLSgKdqNfa6RdRsAAkPwRuJZNbpByn+RrJi1RXTwdi8RQF6ymDwGMAtZ6TVE+4uoKh+MYkcLsT0Hk8eAienbiGdjJHZTpmNjlbFJNKDVAp2fJlYju6IreQxQ08UJDNYdoLSl6AadO+fFuCQqVMB1NJwPm69T04Wv5WhfcWyfXQB+wXRs1pt+nCknRa0LVzSA/2B+a9+zQJadb7IyyV24YAxKp2Jqs3emZTuNnKxsah+uabKbMk7CbTgJx/zIgQYErIeTKRQ9yD9wxVof5YolPHqaWo7TD6tJlh7jQnK5z2n3+fGdggIOx2kaa2YI9QWarc5Ce1ipNWMKeSG4DysFF52KBmTNMmn5HqCFkwy34rDg05gDwgH3bBi+sgFhN/e8QvRn8kbamCOhgrZ9GJhFDgfcMHzFb6BAtjKpFhzTjwv1KCVuxHvCbsSiEz4CANnj84cwHdFXAbAOJ4LTSAawGWFn5tDhLMYz6nWeU2wJfIhmIJBefcd/A5FWQWGgrWzyORZ3Q6HuV+Jf0Bj+BTX69fm1zWgK7By1YTXchFDORywnfQ7GpzOo6S+qECrsx2ifVQAAAABJRU5ErkJggg==');
+  }
+
+  div.callout-tip.callout-style-default .callout-title {
+    background-color: #ccf1e3
+  }
+
+  div.callout-caution {
+    border-left-color: #fd7e14 !important;
+  }
+
+  div.callout-caution .callout-icon::before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAIKADAAQAAAABAAAAIAAAAACshmLzAAACV0lEQVRYCdVWzWoUQRCuqp2ICBLJXgITZL1EfQDBW/bkzUMUD7klD+ATSHBEfAIfQO+iXsWDxJsHL96EHAwhgzlkg8nBg25XWb0zIb0zs9muYYWkoKeru+vn664fBqElyZNuyh167NXJ8Ut8McjbmEraKHkd7uAnAFku+VWdb3reSmRV8PKSLfZ0Gjn3a6Xlcq9YGb6tADjn+lUfTXtVmaZ1KwBIvFI11rRXlWlatwIAAv2asaa9mlB9wwygiDX26qaw1yYPzFXg2N1GgG0FMF8Oj+VIx7E/03lHx8UhvYyNZLN7BwSPgekXXLribw7w5/c8EF+DBK5idvDVYtEEwMeYefjjLAdEyQ3M9nfOkgnPTEkYU+sxMq0BxNR6jExrAI31H1rzvLEfRIdgcv1XEdj6QTQAS2wtstEALLG1yEZ3QhH6oDX7ExBSFEkFINXH98NTrme5IOaaA7kIfiu2L8A3qhH9zRbukdCqdsA98TdElyeMe5BI8Rs2xHRIsoTSSVFfCFCWGPn9XHb4cdobRIWABNf0add9jakDjQJpJ1bTXOJXnnRXHRf+dNL1ZV1MBRCXhMbaHqGI1JkKIL7+i8uffuP6wVQAzO7+qVEbF6NbS0LJureYcWXUUhH66nLR5rYmva+2tjRFtojkM2aD76HEGAD3tPtKM309FJg5j/K682ywcWJ3PASCcycH/22u+Bh7Aa0ehM2Fu4z0SAE81HF9RkB21c5bEn4Dzw+/qNOyXr3DCTQDMBOdhi4nAgiFDGCinIa2owCEChUwD8qzd03PG+qdW/4fDzjUMcE1ZpIAAAAASUVORK5CYII=');
+  }
+
+  div.callout-caution.callout-style-default .callout-title {
+    background-color: #ffe5d0
+  }
+
+  </style>
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none;
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". ";
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto;
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0;
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+<section id="title-slide" data-background-color="#f3f4f4" data-background-image="../../assets/bmeh_normal.png" data-background-position="60% 120%" data-background-size="80%" class="quarto-title-block center">
+  <h1 class="title">Introduction to Bayesian Methods</h1>
+  <p class="subtitle">Key ideas and concepts</p>
+
+<div class="quarto-title-authors">
+<div class="quarto-title-author">
+<div class="quarto-title-author-name">
+Robbie M. Parks
+</div>
+<div class="quarto-title-author-email">
+<a href="mailto:robbie.parks@columbia.edu">robbie.parks@columbia.edu</a>
+</div>
+        <p class="quarto-title-affiliation">
+            Environmental Health Sciences, Columbia University
+          </p>
+    </div>
+</div>
+
+  <p class="date">Aug 14, 2023</p>
+</section>
+<section id="outline" class="title-slide slide level1 center">
+<h1>Outline</h1>
+<ul>
+<li class="fragment">Overview</li>
+<li class="fragment">Introduction to Bayesian methods and concepts</li>
+<li class="fragment">Using <code>NIMBLE</code> for Bayesian inference</li>
+</ul>
+</section>
+
+<section>
+<section id="overview" class="title-slide slide level1 center">
+<h1>Overview</h1>
+
+</section>
+<section id="this-course-is-for-those-who" class="slide level2">
+<h2>This course is for those who</h2>
+<ul>
+<li class="fragment">Are interested or who have heard about Bayesian modeling.</li>
+<li class="fragment">Work in Environmental Health (or adjacent fields).</li>
+<li class="fragment">Have little theoretical or practical experience of Bayesian ideas.</li>
+<li class="fragment">Would like some tools and know-how to get started in an approachable and friendly setting.</li>
+<li class="fragment">People who would like to have some fun while learning!</li>
+<li class="fragment">Some equations will be there but mainly for reference.</li>
+<li class="fragment">Lots of code though throughout the two days…</li>
+</ul>
+</section>
+<section id="r" class="slide level2">
+<h2><code>R</code></h2>
+<ul>
+<li class="fragment"><code>R</code> is an interactive environment developed by statisticians for data analysis.</li>
+<li class="fragment">A more detailed Introduction to <code>R</code> can be found at https://www.r-project.org.</li>
+<li class="fragment"><code>R</code> is the environment we will use throughout the workshop.</li>
+<li class="fragment">But this isn’t a course to learn R…</li>
+<li class="fragment">There will lots of code, though we will restrict the equations as much as possible.</li>
+</ul>
+</section>
+<section id="r-code" class="slide level2">
+<h2><code>R</code> code</h2>
+<div>
+<ul>
+<li>Sample <code>R</code> code:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># Load packages</span></span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-3"><a href="#cb1-3"></a></span>
+<span id="cb1-4"><a href="#cb1-4"></a><span class="co"># Create a dataset</span></span>
+<span id="cb1-5"><a href="#cb1-5"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb1-6"><a href="#cb1-6"></a>data <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">rnorm</span>(<span class="dv">100</span>),<span class="at">y=</span><span class="fu">rnorm</span>(<span class="dv">100</span>))</span>
+<span id="cb1-7"><a href="#cb1-7"></a></span>
+<span id="cb1-8"><a href="#cb1-8"></a><span class="co"># Plot and rough fit</span></span>
+<span id="cb1-9"><a href="#cb1-9"></a>p <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(data, <span class="fu">aes</span>(x, y)) <span class="sc">+</span></span>
+<span id="cb1-10"><a href="#cb1-10"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb1-11"><a href="#cb1-11"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"loess"</span>)</span>
+<span id="cb1-12"><a href="#cb1-12"></a></span>
+<span id="cb1-13"><a href="#cb1-13"></a><span class="fu">plot</span>(p)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="r-code-output" class="slide level2">
+<h2><code>R</code> code output</h2>
+<div>
+<ul>
+<li>Output of code:</li>
+</ul>
+</div>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-2-1.png" width="960" class="r-stretch"></section>
+<section id="rstudio-by-posit" class="slide level2">
+<h2><code>RStudio</code> by <code>Posit</code></h2>
+<ul>
+<li class="fragment"><code>RStudio</code> is an integrated development environment (IDE) for <code>R</code>.</li>
+<li class="fragment"><code>RStudio</code> provides a convenient graphical interface to <code>R</code>, making it more user-friendly, and providing many useful features.</li>
+<li class="fragment">Such features include direct code execution, tools for plotting, history, debugging and workspace management.</li>
+<li class="fragment">A more detailed background on to <code>RStudio</code> can be found at <a href="https://www.rstudio.com/about/">https://www.rstudio.com/about/</a>.</li>
+</ul>
+</section>
+<section id="rstudio-by-posit-1" class="slide level2">
+<h2><code>RStudio</code> by <code>Posit</code></h2>
+<img data-src="assets/what_is_rstudio.png" class="r-stretch">
+</section>
+<section id="posit-rstudio-cloud" class="slide level2 smaller">
+<h2><code>Posit</code> (<code>RStudio</code>) <code>Cloud</code></h2>
+<ul>
+<li class="fragment">We will assume you have done the preliminary homework, which includes learning the basics of <code>RStudio</code> <code>Cloud</code>.</li>
+<li class="fragment"><code>RStudio</code> <code>Cloud</code> is a cloud-based <code>RStudio</code> which runs projects and code in the cloud.</li>
+<li class="fragment"><code>RStudio</code> <code>Cloud</code> allows convenient scaling and sharing of code, including for training programs such as SHARP.</li>
+<li class="fragment">Registration for free is available via <a href="https://rstudio.cloud/">https://rstudio.cloud/</a>.</li>
+<li class="fragment">We will go through how to navigate <code>RStudio</code> <code>Cloud</code> together</li>
+<li class="fragment">More details are available via <a href="https://rstudio.cloud/learn/guide">https://rstudio.cloud/learn/guide</a>.</li>
+</ul>
+</section>
+<section id="github" class="slide level2">
+<h2><code>GitHub</code></h2>
+<ul>
+<li class="fragment">Version control to interface with <code>Posit</code> (<code>RStudio</code>) <code>Cloud.</code></li>
+<li class="fragment">This is just for information, as you will not be expected to be an expert on <code>GitHub</code> to participate in this <code>SHARP</code> course.</li>
+<li class="fragment">However, you should learn it in general as it’s really useful in today’s modern research environment.</li>
+</ul>
+<img data-src="assets/github_banner.png" class="r-stretch">
+</section>
+<section id="nimble" class="slide level2 smaller">
+<h2><code>NIMBLE</code></h2>
+<ul>
+<li class="fragment"><code>NIMBLE</code> is one of several Bayesian inference packages.</li>
+<li class="fragment"><code>NIMBLE</code> code is written in a slightly unusual format if you’re used to just using base <code>R</code>.</li>
+<li class="fragment">Written in the style of a program called <code>BUGS</code>, developed at Imperial College London.</li>
+<li class="fragment">But you don’t really need to know about <code>BUGS</code> to be able to use <code>NIMBLE.</code></li>
+<li class="fragment">In the lab after this, we will start with some straightforward examples for situations you’re likely familiar with to introduce the style of writing models.</li>
+<li class="fragment">These examples will feature basic regression models using linear predictors.</li>
+</ul>
+</section>
+<section id="r-with-nimble-from-lab-immediately-after-this" class="slide level2">
+<h2><code>R</code> with <code>NIMBLE</code> (from lab immediately after this)</h2>
+<div>
+<ul>
+<li>Example basic linear multi-predictor regression:</li>
+</ul>
+</div>
+<p><span class="math display">\[
+\begin{split}
+y_i &amp;\sim \text{Normal}(\mu_i, \sigma) \quad i = 1,..., N \\
+\mu_i &amp;= \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3
+\end{split}
+\]</span></p>
+</section>
+<section id="r-with-nimble-from-lab-immediately-after-this-1" class="slide level2">
+<h2><code>R</code> with <code>NIMBLE</code> (from lab immediately after this)</h2>
+<div>
+<ul>
+<li>As written in frequentist form:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>model_freq <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb2-2"><a href="#cb2-2"></a>  y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3,</span>
+<span id="cb2-3"><a href="#cb2-3"></a>  <span class="at">data =</span> df</span>
+<span id="cb2-4"><a href="#cb2-4"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="r-with-nimble-from-lab-immediately-after-this-2" class="slide level2">
+<h2><code>R</code> with <code>NIMBLE</code> (from lab immediately after this)</h2>
+<div>
+<ul>
+<li>Sample <code>NIMBLE</code> code:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>code <span class="ot">&lt;-</span> <span class="fu">nimbleCode</span>({</span>
+<span id="cb3-2"><a href="#cb3-2"></a>  <span class="co"># priors for parameters</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>  alpha <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for alpha</span></span>
+<span id="cb3-4"><a href="#cb3-4"></a>  beta1 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta1</span></span>
+<span id="cb3-5"><a href="#cb3-5"></a>  beta2 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta2</span></span>
+<span id="cb3-6"><a href="#cb3-6"></a>  beta3 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta3</span></span>
+<span id="cb3-7"><a href="#cb3-7"></a>  sigma <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="co"># prior for variance components</span></span>
+<span id="cb3-8"><a href="#cb3-8"></a></span>
+<span id="cb3-9"><a href="#cb3-9"></a>  <span class="co"># regression formula</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) { <span class="co"># n is the number of observations we have in the data</span></span>
+<span id="cb3-11"><a href="#cb3-11"></a>    mu[i] <span class="ot">&lt;-</span> alpha <span class="sc">+</span> beta1 <span class="sc">*</span> x1[i] <span class="sc">+</span> beta2 <span class="sc">*</span> x2[i] <span class="sc">+</span> beta3 <span class="sc">*</span> x3[i] <span class="co"># manual entry of linear predictors</span></span>
+<span id="cb3-12"><a href="#cb3-12"></a>    y[i] <span class="sc">~</span> <span class="fu">dnorm</span>(mu[i], <span class="at">sd =</span> sigma)</span>
+<span id="cb3-13"><a href="#cb3-13"></a>  }</span>
+<span id="cb3-14"><a href="#cb3-14"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="r-with-nimble-from-lab-immediately-after-this-3" class="slide level2 smaller">
+<h2><code>R</code> with <code>NIMBLE</code> (from lab immediately after this)</h2>
+<div>
+<ul>
+<li>Comparing frequentist (top) with <code>NIMBLE</code> code (bottom):</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>model_freq <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb4-2"><a href="#cb4-2"></a>  y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3,</span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="at">data =</span> df</span>
+<span id="cb4-4"><a href="#cb4-4"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>code <span class="ot">&lt;-</span> <span class="fu">nimbleCode</span>({</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="co"># priors for parameters</span></span>
+<span id="cb5-3"><a href="#cb5-3"></a>  alpha <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for alpha</span></span>
+<span id="cb5-4"><a href="#cb5-4"></a>  beta1 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta1</span></span>
+<span id="cb5-5"><a href="#cb5-5"></a>  beta2 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta2</span></span>
+<span id="cb5-6"><a href="#cb5-6"></a>  beta3 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta3</span></span>
+<span id="cb5-7"><a href="#cb5-7"></a>  sigma <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="co"># prior for variance components</span></span>
+<span id="cb5-8"><a href="#cb5-8"></a></span>
+<span id="cb5-9"><a href="#cb5-9"></a>  <span class="co"># regression formula</span></span>
+<span id="cb5-10"><a href="#cb5-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) { <span class="co"># n is the number of observations we have in the data</span></span>
+<span id="cb5-11"><a href="#cb5-11"></a>    mu[i] <span class="ot">&lt;-</span> alpha <span class="sc">+</span> beta1 <span class="sc">*</span> x1[i] <span class="sc">+</span> beta2 <span class="sc">*</span> x2[i] <span class="sc">+</span> beta3 <span class="sc">*</span> x3[i] <span class="co"># manual entry of linear predictors</span></span>
+<span id="cb5-12"><a href="#cb5-12"></a>    y[i] <span class="sc">~</span> <span class="fu">dnorm</span>(mu[i], <span class="at">sd =</span> sigma)</span>
+<span id="cb5-13"><a href="#cb5-13"></a>  }</span>
+<span id="cb5-14"><a href="#cb5-14"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section></section>
+<section>
+<section id="introduction-to-bayesian-methods-and-concepts" class="title-slide slide level1 center">
+<h1>Introduction to Bayesian methods and concepts</h1>
+
+</section>
+<section id="classical-probability" class="slide level2">
+<h2>Classical probability</h2>
+<ul>
+<li class="fragment">“Frequentist”.</li>
+<li class="fragment">Limit of long-run relative frequency.</li>
+<li class="fragment">Ratio of the number of times event occurred to the number of trials.</li>
+</ul>
+</section>
+<section id="classical-probability-1" class="slide level2">
+<h2>Classical probability</h2>
+<p><img data-src="assets/dice_wikipedia.svg" class="absolute" style="top: 100px; right: 50px; width: 200px; height: 200px; "></p>
+<ul>
+<li class="fragment">Consider rolling a fair six-sided die many times.</li>
+<li class="fragment">We are seeing how often we roll a <span class="math inline">\(2\)</span>.</li>
+<li class="fragment">We roll die a large number of times (<span class="math inline">\(N\)</span>).</li>
+<li class="fragment">Probability that we roll a <span class="math inline">\(2\)</span>:</li>
+<li class="fragment"><span class="math display">\[Pr(X=2) = N(X=2)/N\]</span></li>
+<li class="fragment">This will tend to <span class="math inline">\(1/6=0.16666666...\)</span> as <span class="math inline">\(N \rightarrow \infty\)</span></li>
+</ul>
+</section>
+<section id="classical-probability-2" class="slide level2">
+<h2>Classical probability</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="co"># Load packages</span></span>
+<span id="cb6-2"><a href="#cb6-2"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb6-3"><a href="#cb6-3"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb6-4"><a href="#cb6-4"></a></span>
+<span id="cb6-5"><a href="#cb6-5"></a><span class="co"># Create dataset</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span>
+<span id="cb6-7"><a href="#cb6-7"></a>n<span class="ot">=</span><span class="dv">100</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a>data <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">x=</span><span class="fu">rdunif</span>(n,<span class="dv">6</span>))</span>
+<span id="cb6-9"><a href="#cb6-9"></a></span>
+<span id="cb6-10"><a href="#cb6-10"></a><span class="co"># Plot</span></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="fu">ggplot</span>(data) <span class="sc">+</span></span>
+<span id="cb6-12"><a href="#cb6-12"></a>  <span class="fu">geom_histogram</span>(<span class="fu">aes</span>(x,<span class="at">y=</span><span class="fu">after_stat</span>(count)<span class="sc">/</span><span class="fu">sum</span>(<span class="fu">after_stat</span>(count)))) <span class="sc">+</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">6</span>, <span class="at">linetype=</span><span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>  <span class="fu">xlab</span>(<span class="st">'Roll value'</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">'Count'</span>) <span class="sc">+</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a>  <span class="fu">ggtitle</span>(<span class="fu">paste0</span>(<span class="st">'Rolling n = '</span>,n,<span class="st">' times'</span>)) <span class="sc">+</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="classical-probability-3" class="slide level2">
+<h2>Classical probability</h2>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-3-1.png" width="960" class="r-stretch"></section>
+<section id="classical-probability-4" class="slide level2">
+<h2>Classical probability</h2>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-4-1.png" width="960" class="r-stretch"></section>
+<section id="classical-probability-5" class="slide level2">
+<h2>Classical probability</h2>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-5-1.png" width="960" class="r-stretch"></section>
+<section id="classical-probability-6" class="slide level2">
+<h2>Classical probability</h2>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-6-1.png" width="960" class="r-stretch"></section>
+<section id="classical-probability-7" class="slide level2">
+<h2>Classical probability</h2>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-7-1.png" width="960" class="r-stretch"></section>
+<section id="subjective-probability" class="slide level2">
+<h2>Subjective probability</h2>
+<img data-src="assets/rain_nyt_small.jpg" class="r-stretch">
+</section>
+<section id="subjective-probability-1" class="slide level2">
+<h2>Subjective probability</h2>
+<ul>
+<li class="fragment">What about the probability that it will rain tomorrow?</li>
+<li class="fragment">What is the probability that the next president will be a very old man?</li>
+<li class="fragment">What is the probability that aliens built the pyramids?</li>
+<li class="fragment">Such questions cannot be answered by long-run probability.</li>
+<li class="fragment">Degree of belief involved.</li>
+<li class="fragment">However, long-run reasoning can inform these estimations.</li>
+<li class="fragment">Foundation of Bayesian thinking.</li>
+</ul>
+</section>
+<section id="thomas-bayes-and-simon-pierre-laplace" class="slide level2">
+<h2>Thomas Bayes and Simon Pierre Laplace</h2>
+<ul>
+<li class="fragment">Started with these two.</li>
+<li class="fragment">Bayes (1701-1761) is why it’s called <span style="color:red;">Bayes</span>ian.</li>
+<li class="fragment">Sorry Laplace (1749-1825)!</li>
+</ul>
+<p><img data-src="assets/thomas_bayes_wikipedia.jpg" class="absolute" style="top: 100px; right: 50px; width: 200px; height: 200px; "></p>
+<p><img data-src="assets/simon_laplace_wikipedia.jpg" class="absolute" style="top: 350px; right: 50px; width: 200px; height: 200px; "></p>
+<p><img data-src="assets/big_red_cross.png" class="absolute" style="top: 350px; right: 50px; width: 200px; height: 200px; "></p>
+<!-- ## Bayes theorem -->
+<!-- - Conditional probability is the axis on which Bayesian statistics turns. -->
+<!-- - Same equation... -->
+<!-- - ...but different interpretation. -->
+<!-- - $$ -->
+<!--   P(B|A) = \frac{P(A|B) P(B)}{P(A)} -->
+<!--   $$ -->
+</section>
+<section id="bayes-theorem-prior-likelihood-and-posterior" class="slide level2">
+<h2>Bayes theorem, prior, likelihood and posterior</h2>
+<ul>
+<li class="fragment"><p><span class="math display">\[
+P(\theta|y) \propto P(y|\theta) P(\theta)
+\]</span></p></li>
+<li class="fragment"><p><span class="math inline">\(P(\theta)\)</span> is the prior</p></li>
+<li class="fragment"><p><span class="math inline">\(P(y|\theta)\)</span> is the likelihood</p></li>
+<li class="fragment"><p><span class="math inline">\(P(\theta|y)\)</span> is the posterior</p></li>
+<li class="fragment"><p>Prior is what is known or estimated a priori.</p></li>
+<li class="fragment"><p>Likelihood is probability of data given parameters of interest.</p></li>
+<li class="fragment"><p>Posterior is probability of parameters of interest given data.</p></li>
+</ul>
+</section>
+<section id="bayesian-inference" class="slide level2">
+<h2>Bayesian inference</h2>
+<ul>
+<li class="fragment">Leaving behind Frequentist inference here.</li>
+<li class="fragment">Bayesian when prior is unknown and is distribution is specified.</li>
+<li class="fragment">Bayes theorem exists in frequentist world, but here prior is a distribution.</li>
+<li class="fragment">Prior + Data -&gt; Posterior.</li>
+</ul>
+<img data-src="assets/bmeh_normal.png" class="r-stretch">
+</section>
+<section id="choosing-the-prior-distribution-conjugate-or-not" class="slide level2">
+<h2>Choosing the prior distribution (conjugate or not)</h2>
+<ul>
+<li class="fragment">Prior choice can be vital.</li>
+<li class="fragment">Type of distribution (we will see in a second).</li>
+<li class="fragment">Hyperparameters/hyperpriors.</li>
+<li class="fragment">Often a ‘natural’ candidate for prior choice.</li>
+<li class="fragment">Mathematically solvable or not.</li>
+<li class="fragment">Some are solvable (conjugate).</li>
+<li class="fragment">Most are not (non-conjugate)…</li>
+</ul>
+</section>
+<section id="conjugacy" class="slide level2">
+<h2>Conjugacy</h2>
+<ul>
+<li class="fragment">When the posterior is an analytical solution of the prior and data.</li>
+<li class="fragment">Examples include:</li>
+<li class="fragment">Normal data and Normal prior (you’ll see an example in a minute).</li>
+<li class="fragment">Binomial data and Beta prior (logistic regression).</li>
+<li class="fragment">Poisson data and Gamma prior (useful for counts).</li>
+</ul>
+</section>
+<section id="non-conjugacy-most-of-the-time" class="slide level2">
+<h2>Non-conjugacy (most of the time)</h2>
+<ul>
+<li class="fragment">Because most prior-data-posterior relationships are non-conjugate.</li>
+<li class="fragment">Need non-analytical solution to infer distributions.</li>
+<li class="fragment">This is where ‘brute force’ sampling of distributions takes place.</li>
+</ul>
+</section>
+<section id="sampling-posterior" class="slide level2">
+<h2>Sampling posterior</h2>
+<div>
+<ul>
+<li>Example basic linear multi-predictor regression:</li>
+</ul>
+</div>
+<p><span class="math display">\[
+\begin{split}
+y_i &amp;\sim \text{Normal}(\mu_i, \sigma) \quad i = 1,..., N \\
+\mu_i &amp;= \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 \\
+\alpha &amp;= 0 \\
+\beta_1 &amp;= 0.2 \\
+\beta_2 &amp;= 0.5 \\
+\beta_3 &amp;= 0.3 \\
+\sigma &amp;= 0.5\\
+\end{split}
+\]</span></p>
+</section>
+<section id="sampling-posterior-1" class="slide level2">
+<h2>Sampling posterior</h2>
+<img data-src="assets/sample_example.png" class="r-stretch">
+</section>
+<section id="informative-or-non-informative-priors" class="slide level2">
+<h2>Informative or non-informative priors</h2>
+<ul>
+<li class="fragment">Main source of intrigue from non-Bayesians is how priors are chosen.</li>
+<li class="fragment">Priors should be informed by existing knowledge.</li>
+<li class="fragment">But what if we don’t know anything really prior to inference?</li>
+<li class="fragment">Most of the time we will not have analytical solutions (more on that later).</li>
+<li class="fragment">Non-informative/informative priors outside scope of this but something to pay attention to.</li>
+</ul>
+</section>
+<section id="example-of-influence-of-priors-on-sampling" class="slide level2">
+<h2>Example of influence of priors on sampling</h2>
+<div>
+<ul>
+<li>Wide priors</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>code <span class="ot">&lt;-</span> <span class="fu">nimbleCode</span>({</span>
+<span id="cb7-2"><a href="#cb7-2"></a>  <span class="co"># priors for parameters</span></span>
+<span id="cb7-3"><a href="#cb7-3"></a>  alpha <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for alpha</span></span>
+<span id="cb7-4"><a href="#cb7-4"></a>  beta1 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta1</span></span>
+<span id="cb7-5"><a href="#cb7-5"></a>  beta2 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta2</span></span>
+<span id="cb7-6"><a href="#cb7-6"></a>  beta3 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta3</span></span>
+<span id="cb7-7"><a href="#cb7-7"></a>  sigma <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="co"># prior for variance components</span></span>
+<span id="cb7-8"><a href="#cb7-8"></a></span>
+<span id="cb7-9"><a href="#cb7-9"></a>  <span class="co"># regression formula</span></span>
+<span id="cb7-10"><a href="#cb7-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) { <span class="co"># n is the number of observations we have in the data</span></span>
+<span id="cb7-11"><a href="#cb7-11"></a>    mu[i] <span class="ot">&lt;-</span> alpha <span class="sc">+</span> beta1 <span class="sc">*</span> x1[i] <span class="sc">+</span> beta2 <span class="sc">*</span> x2[i] <span class="sc">+</span> beta3 <span class="sc">*</span> x3[i] <span class="co"># manual entry of linear predictors</span></span>
+<span id="cb7-12"><a href="#cb7-12"></a>    y[i] <span class="sc">~</span> <span class="fu">dnorm</span>(mu[i], <span class="at">sd =</span> sigma)</span>
+<span id="cb7-13"><a href="#cb7-13"></a>  }</span>
+<span id="cb7-14"><a href="#cb7-14"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="example-of-influence-of-priors-on-sampling-1" class="slide level2">
+<h2>Example of influence of priors on sampling</h2>
+<div>
+<ul>
+<li>Wide priors</li>
+</ul>
+</div>
+
+<img data-src="assets/wide_priors.png" class="r-stretch"></section>
+<section id="example-of-influence-of-priors-on-sampling-2" class="slide level2">
+<h2>Example of influence of priors on sampling</h2>
+<div>
+<ul>
+<li>Worse priors</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>code_worse_priors <span class="ot">&lt;-</span> <span class="fu">nimbleCode</span>({</span>
+<span id="cb8-2"><a href="#cb8-2"></a>  <span class="co"># priors for parameters</span></span>
+<span id="cb8-3"><a href="#cb8-3"></a>  alpha <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for alpha</span></span>
+<span id="cb8-4"><a href="#cb8-4"></a>  beta1 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta1</span></span>
+<span id="cb8-5"><a href="#cb8-5"></a>  beta2 <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">100</span>, <span class="dv">100000</span>) <span class="co"># prior for beta2</span></span>
+<span id="cb8-6"><a href="#cb8-6"></a>  beta3 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta3</span></span>
+<span id="cb8-7"><a href="#cb8-7"></a>  sigma <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="co"># prior for variance components</span></span>
+<span id="cb8-8"><a href="#cb8-8"></a></span>
+<span id="cb8-9"><a href="#cb8-9"></a>  <span class="co"># regression formula</span></span>
+<span id="cb8-10"><a href="#cb8-10"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb8-11"><a href="#cb8-11"></a>    mu[i] <span class="ot">&lt;-</span> alpha <span class="sc">+</span> beta1 <span class="sc">*</span> x1[i] <span class="sc">+</span> beta2 <span class="sc">*</span> x2[i] <span class="sc">+</span> beta3 <span class="sc">*</span> x3[i] <span class="co"># manual entry of linear predictors</span></span>
+<span id="cb8-12"><a href="#cb8-12"></a>    y[i] <span class="sc">~</span> <span class="fu">dnorm</span>(mu[i], <span class="at">sd =</span> sigma)</span>
+<span id="cb8-13"><a href="#cb8-13"></a>  }</span>
+<span id="cb8-14"><a href="#cb8-14"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="example-of-influence-of-priors-on-sampling-3" class="slide level2">
+<h2>Example of influence of priors on sampling</h2>
+<div>
+<ul>
+<li>Worse priors</li>
+</ul>
+</div>
+
+<img data-src="assets/worse_priors.png" class="r-stretch"></section>
+<section id="mcmc-gibbs-approximations-to-sampling-variational-inference" class="slide level2">
+<h2>MCMC, Gibbs, approximations to sampling (variational inference)</h2>
+<ul>
+<li class="fragment">Many different types.</li>
+<li class="fragment">Others in the workshop will discuss these briefly</li>
+<li class="fragment">For now, let us focus on building a simple model.</li>
+</ul>
+</section>
+<section id="non-conjugate-how-to-get-posterior" class="slide level2">
+<h2>Non-conjugate how to get posterior?</h2>
+<ul>
+<li class="fragment">Some kind of software to help us implement models for inference.</li>
+<li class="fragment">Using <code>R</code>.</li>
+<li class="fragment">Packages (<code>BUGS</code>,<code>STAN</code>,<code>INLA</code> etc.).</li>
+<li class="fragment">We will be focusing on using <code>NIMBLE</code> throughout the two days.</li>
+</ul>
+</section></section>
+<section>
+<section id="using-nimble-for-bayesian-inference" class="title-slide slide level1 center">
+<h1>Using <code>NIMBLE</code> for Bayesian inference</h1>
+
+</section>
+<section id="why-were-using-nimble-for-almost-everything-during-the-workshop" class="slide level2">
+<h2>Why we’re using <code>NIMBLE</code> for (almost) everything during the workshop</h2>
+<ul>
+<li class="fragment">Interpretability.</li>
+<li class="fragment">Flexibility.</li>
+<li class="fragment">There are other Bayesian packages.</li>
+<li class="fragment">You will see on Day 2…</li>
+</ul>
+</section>
+<section id="illustrative-example-of-basic-regression-in-nimble" class="slide level2">
+<h2>Illustrative example of basic regression in <code>NIMBLE</code></h2>
+<ul>
+<li class="fragment">Let’s go through an example from the upcoming lab</li>
+</ul>
+</section>
+<section id="linear-regression" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>Example basic linear multi-predictor regression:</li>
+</ul>
+</div>
+<p><span class="math display">\[
+\begin{split}
+y_i &amp;\sim \text{Normal}(\mu_i, \sigma) \quad i = 1,..., N \\
+\mu_i &amp;= \alpha + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 \\
+\alpha &amp;= 0 \\
+\beta_1 &amp;= 0.2 \\
+\beta_2 &amp;= 0.5 \\
+\beta_3 &amp;= 0.3 \\
+\end{split}
+\]</span></p>
+</section>
+<section id="linear-regression-1" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>First create some example data for our model:</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2"></a>p <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co"># number of explanatory variables</span></span>
+<span id="cb9-3"><a href="#cb9-3"></a>n <span class="ot">&lt;-</span> <span class="dv">10000</span> <span class="co"># number of observations</span></span>
+<span id="cb9-4"><a href="#cb9-4"></a>X <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">round</span>(<span class="fu">rnorm</span>(p <span class="sc">*</span> n), <span class="dv">2</span>), <span class="at">nrow =</span> n, <span class="at">ncol =</span> p) <span class="co"># explanatory variables</span></span>
+<span id="cb9-5"><a href="#cb9-5"></a>true_betas <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">c</span>(<span class="fl">0.2</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span>)) <span class="co"># coefficients for beta1, beta2, beta3</span></span>
+<span id="cb9-6"><a href="#cb9-6"></a>sigma <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="co"># variance of variability around perfect agreement</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a>y <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, X <span class="sc">%*%</span> true_betas, sigma)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-2" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>What does the dataset look like?</li>
+</ul>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+        y    x1    x2    x3
+    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+1 -0.145  -0.63 -0.8   0.24
+2  0.0248  0.18 -1.06  0.24
+3 -1.09   -0.84 -1.04 -0.64
+4 -1.00    1.6  -1.19 -1.93
+5 -0.138   0.33 -0.5   1.04
+6  0.345  -0.82 -0.52 -0.28</code></pre>
+</div>
+</div>
+</section>
+<section id="linear-regression-3" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>What does equivalent frequentist model output look like for reference?</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>model_freq <span class="ot">&lt;-</span> <span class="fu">lm</span>(</span>
+<span id="cb11-2"><a href="#cb11-2"></a>  y <span class="sc">~</span> x1 <span class="sc">+</span> x2 <span class="sc">+</span> x3,</span>
+<span id="cb11-3"><a href="#cb11-3"></a>  <span class="at">data =</span> df</span>
+<span id="cb11-4"><a href="#cb11-4"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5"></a>central_est <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">t</span>(model_freq<span class="sc">$</span>coefficients))</span>
+<span id="cb11-6"><a href="#cb11-6"></a>conf_int <span class="ot">&lt;-</span> <span class="fu">confint</span>(model_freq)</span>
+<span id="cb11-7"><a href="#cb11-7"></a><span class="fu">cbind</span>(central_est, conf_int)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-4" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>What does equivalent frequentist model output look like for reference?</li>
+</ul>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>                              2.5 %      97.5 %
+(Intercept) -0.00272699 -0.01251412 0.007060142
+x1           0.20196677  0.19229912 0.211634407
+x2           0.49277663  0.48289869 0.502654568
+x3           0.29160573  0.28189340 0.301318063</code></pre>
+</div>
+</div>
+</section>
+<section id="linear-regression-5" class="slide level2 smaller">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li><code>NIMBLE</code> adopts and extends <code>BUGS</code> as a modeling language and lets you program with the models you create.</li>
+<li>Looks like below (as seen earlier in lecture and later in lab).</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="fu">library</span>(nimble)</span>
+<span id="cb13-2"><a href="#cb13-2"></a>code <span class="ot">&lt;-</span> <span class="fu">nimbleCode</span>({</span>
+<span id="cb13-3"><a href="#cb13-3"></a>  <span class="co"># priors for parameters</span></span>
+<span id="cb13-4"><a href="#cb13-4"></a>  alpha <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for alpha</span></span>
+<span id="cb13-5"><a href="#cb13-5"></a>  beta1 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta1</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>  beta2 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta2</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>  beta3 <span class="sc">~</span> <span class="fu">dnorm</span>(<span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">100</span>) <span class="co"># prior for beta3</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a>  sigma <span class="sc">~</span> <span class="fu">dunif</span>(<span class="dv">0</span>, <span class="dv">100</span>) <span class="co"># prior for variance components</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a></span>
+<span id="cb13-10"><a href="#cb13-10"></a>  <span class="co"># regression formula</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) { <span class="co"># n is the number of observations we have in the data</span></span>
+<span id="cb13-12"><a href="#cb13-12"></a>    mu[i] <span class="ot">&lt;-</span> alpha <span class="sc">+</span> beta1 <span class="sc">*</span> x1[i] <span class="sc">+</span> beta2 <span class="sc">*</span> x2[i] <span class="sc">+</span> beta3 <span class="sc">*</span> x3[i] <span class="co"># manual entry of linear predictors</span></span>
+<span id="cb13-13"><a href="#cb13-13"></a>    y[i] <span class="sc">~</span> <span class="fu">dnorm</span>(mu[i], <span class="at">sd =</span> sigma)</span>
+<span id="cb13-14"><a href="#cb13-14"></a>  }</span>
+<span id="cb13-15"><a href="#cb13-15"></a>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-6" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>Setting up data (will explain more in lab)</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>x1 <span class="ot">&lt;-</span> X[, <span class="dv">1</span>] <span class="sc">-</span> <span class="fu">mean</span>(X[, <span class="dv">1</span>])</span>
+<span id="cb14-2"><a href="#cb14-2"></a>x2 <span class="ot">&lt;-</span> X[, <span class="dv">2</span>] <span class="sc">-</span> <span class="fu">mean</span>(X[, <span class="dv">2</span>])</span>
+<span id="cb14-3"><a href="#cb14-3"></a>x3 <span class="ot">&lt;-</span> X[, <span class="dv">3</span>] <span class="sc">-</span> <span class="fu">mean</span>(X[, <span class="dv">3</span>])</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a>constants <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">n =</span> n)</span>
+<span id="cb14-6"><a href="#cb14-6"></a>data <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">y =</span> y, <span class="at">x1 =</span> x1, <span class="at">x2 =</span> x2, <span class="at">x3 =</span> x3)</span>
+<span id="cb14-7"><a href="#cb14-7"></a></span>
+<span id="cb14-8"><a href="#cb14-8"></a>inits <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="at">alpha =</span> <span class="dv">0</span>, <span class="at">beta1 =</span> <span class="dv">0</span>, <span class="at">beta2 =</span> <span class="dv">0</span>, <span class="at">beta3 =</span> <span class="dv">0</span>, <span class="at">sigma =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-7" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>Run the MCMC simulations. There are lots of arguments in the main function, nimbleMCMC().</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>tic <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb15-2"><a href="#cb15-2"></a>nimbleMCMC_samples_initial <span class="ot">&lt;-</span> <span class="fu">nimbleMCMC</span>(</span>
+<span id="cb15-3"><a href="#cb15-3"></a>  <span class="at">code =</span> code,</span>
+<span id="cb15-4"><a href="#cb15-4"></a>  <span class="at">data =</span> data,</span>
+<span id="cb15-5"><a href="#cb15-5"></a>  <span class="at">constants =</span> constants,</span>
+<span id="cb15-6"><a href="#cb15-6"></a>  <span class="at">inits =</span> inits,</span>
+<span id="cb15-7"><a href="#cb15-7"></a>  <span class="at">niter =</span> <span class="dv">10000</span>, <span class="co"># run 10000 samples</span></span>
+<span id="cb15-8"><a href="#cb15-8"></a>  <span class="at">setSeed =</span> <span class="dv">1</span>,</span>
+<span id="cb15-9"><a href="#cb15-9"></a>  <span class="at">samplesAsCodaMCMC =</span> <span class="cn">TRUE</span></span>
+<span id="cb15-10"><a href="#cb15-10"></a>)</span>
+<span id="cb15-11"><a href="#cb15-11"></a></span>
+<span id="cb15-12"><a href="#cb15-12"></a>toc <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
+<span id="cb15-13"><a href="#cb15-13"></a>toc <span class="sc">-</span> tic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-8" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>Run the MCMC simulations. There are lots of arguments in the main function, nimbleMCMC().</li>
+</ul>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>|-------------|-------------|-------------|-------------|
+|-------------------------------------------------------|</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Time difference of 51.01255 secs</code></pre>
+</div>
+</div>
+</section>
+<section id="linear-regression-9" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>What is the summary of each estimated parameter from the samples? The following operations will help us understand.</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="fu">library</span>(bayesplot)</span>
+<span id="cb18-2"><a href="#cb18-2"></a><span class="fu">library</span>(posterior)</span>
+<span id="cb18-3"><a href="#cb18-3"></a><span class="fu">library</span>(hrbrthemes)</span>
+<span id="cb18-4"><a href="#cb18-4"></a><span class="fu">summarise_draws</span>(nimbleMCMC_samples_initial, <span class="fu">default_summary_measures</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-10" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>What is the summary of each estimated parameter from the samples? The following operations will help us understand.</li>
+</ul>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 7
+  variable     mean   median      sd     mad      q5     q95
+  &lt;chr&gt;       &lt;num&gt;    &lt;num&gt;   &lt;num&gt;   &lt;num&gt;   &lt;num&gt;   &lt;num&gt;
+1 alpha    -0.00395 -0.00388 0.00500 0.00498 -0.0122 0.00426
+2 beta1     0.202    0.202   0.00492 0.00485  0.194  0.210
+3 beta2     0.493    0.493   0.00506 0.00511  0.484  0.501
+4 beta3     0.292    0.292   0.00499 0.00502  0.283  0.300
+5 sigma     0.499    0.499   0.0122  0.00372  0.493  0.505  </code></pre>
+</div>
+</div>
+</section>
+<section id="linear-regression-11" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>Then examine how well the model has converged, which typically is identified by how close each rhat value is to 1.00.</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1"></a><span class="fu">summarise_draws</span>(nimbleMCMC_samples_initial, <span class="fu">default_convergence_measures</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-12" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>Then examine how well the model has converged, which typically is identified by how close each rhat value is to 1.00.</li>
+</ul>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 4
+  variable  rhat ess_bulk ess_tail
+  &lt;chr&gt;    &lt;num&gt;    &lt;num&gt;    &lt;num&gt;
+1 alpha     1.00    9936.    9714.
+2 beta1     1.00   10026.   10110.
+3 beta2     1.00    9990.    9857.
+4 beta3     1.00    9536.    9755.
+5 sigma     1.00     665.     190.</code></pre>
+</div>
+</div>
+</section>
+<section id="linear-regression-13" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>What do the samples of one of the unknown parameters actually look like?</li>
+</ul>
+</div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1"></a><span class="fu">mcmc_trace</span>(nimbleMCMC_samples_initial)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-14" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<ul>
+<li>What do the samples of one of the unknown parameters actually look like?</li>
+</ul>
+</div>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-15-1.png" width="960" class="r-stretch"></section>
+<section id="linear-regression-15" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<p>Let’s now focus on <code>beta1</code> (which we know is 0.2 from setting up initially).</p>
+</div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1"></a><span class="fu">mcmc_trace</span>(nimbleMCMC_samples_initial, <span class="at">pars =</span> <span class="fu">c</span>(<span class="st">"beta1"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="linear-regression-16" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<p>Let’s now focus on <code>beta1</code> (which we know is 0.2 from setting up initially).</p>
+</div>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-16-1.png" width="960" class="r-stretch"></section>
+<section id="linear-regression-17" class="slide level2">
+<h2>Linear regression</h2>
+<div>
+<p>Plotting <code>beta1</code> samples (posterior) as a histogram…</p>
+</div>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-17-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="getting-ready-for-the-lab" class="title-slide slide level1 center">
+<h1>Getting ready for the lab</h1>
+
+</section>
+<section id="the-lab-for-this-session" class="slide level2 smaller">
+<h2>The lab for this session</h2>
+<ul>
+<li class="fragment"><p>This lab will involve taking some models and concepts from the Introduction to Bayesian Methods lecture and introduce you to the way <code>NIMBLE</code> works.</p></li>
+<li class="fragment"><p>During this lab session, we will:</p></li>
+</ul>
+<ol type="1">
+<li class="fragment">Explore how <code>NIMBLE</code> is written and works;</li>
+<li class="fragment">Write some common regression models (Normal, logistic regression, Poisson);</li>
+<li class="fragment">Understand how basic model assessment is made; and</li>
+<li class="fragment">Test out how adjustments of models are made via different priors and more samples.</li>
+</ol>
+</section></section>
+<section id="questions" class="title-slide slide level1 center">
+<h1>Questions?</h1>
+
+</section>
+
+<section>
+<section id="extra" class="title-slide slide level1 center">
+<h1>Extra</h1>
+
+</section>
+<section id="conditional-probability" class="slide level2">
+<h2>Conditional probability</h2>
+<ul>
+<li class="fragment">Two events <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>.</li>
+<li class="fragment">Conditional event <span class="math inline">\(A\)</span> given <span class="math inline">\(B\)</span>.</li>
+<li class="fragment"><span class="math display">\[
+P(A|B) = \frac{P(A \cap B)}{P(B)}
+\]</span></li>
+</ul>
+</section>
+<section id="conditional-probability-1" class="slide level2">
+<h2>Conditional probability</h2>
+<img data-src="assets/venn_diagram.png" class="r-stretch">
+</section>
+<section id="conditional-probability-2" class="slide level2">
+<h2>Conditional probability</h2>
+<p>In a group of 100 SHARP workshop attendees, 40 chose to stay in Manhattan, 30 chose to stay for the entire week, and 20 chose to stay in Manhattan and for the entire week. If a car buyer chosen at random chose to stay in Manhattan, what is the probability they chose to stay for the entire week?</p>
+<p><span class="math display">\[
+P(A|B) = \frac{P(A \cap B)}{P(B)} = 20 / 40 = 0.5
+\]</span></p>
+</section>
+<section id="conditional-probability-3" class="slide level2 smaller">
+<h2>Conditional probability</h2>
+<ul>
+<li class="fragment"><span class="math display">\[
+P(A|B) = \frac{P(A \cap B)}{P(B)}
+\]</span></li>
+<li class="fragment">can also be written as…</li>
+<li class="fragment"><span class="math display">\[
+P(A \cap B) = P(A|B) P(B)
+\]</span></li>
+<li class="fragment">Also…</li>
+<li class="fragment"><span class="math display">\[
+P(B|A) = \frac{P(A \cap B)}{P(A)}
+\]</span></li>
+<li class="fragment">Substituting top into bottom gets…</li>
+<li class="fragment"><span class="math display">\[
+P(B|A) = \frac{P(A|B) P(B)}{P(A)}
+\]</span></li>
+</ul>
+</section>
+<section id="example-of-a-conjugate-pair-normal-normal" class="slide level2 smaller">
+<h2>Example of a conjugate pair: Normal-Normal</h2>
+<ul>
+<li class="fragment"><p>Likelihood</p></li>
+<li class="fragment"><p>Normal distribution is defined by two parameters <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma\)</span>.</p></li>
+<li class="fragment"><p>Bell curve.</p></li>
+<li class="fragment"><p><span class="math inline">\(\mu\)</span> is mean.</p></li>
+<li class="fragment"><p><span class="math inline">\(\sigma\)</span> is standard deviation.</p></li>
+<li class="fragment"><p><span class="math display">\[
+y|\mu,\sigma \sim Normal(\mu,\sigma^2)
+\]</span></p></li>
+<li class="fragment"><p>Prior</p></li>
+<li class="fragment"><p>Normal distribution is mathematically the conjugate of itself, with hyperparameters <span class="math inline">\(\mu_0\)</span> and <span class="math inline">\(\sigma_0\)</span>.</p></li>
+<li class="fragment"><p><span class="math display">\[
+\mu \sim Normal(\mu_0,\sigma_0^2)
+\]</span></p></li>
+</ul>
+</section>
+<section id="normal-normal" class="slide level2">
+<h2>Normal-Normal</h2>
+<ul>
+<li class="fragment">Posterior</li>
+<li class="fragment">Because of conjugacy, there is an analytical solution for the posterior which is also normally distributed.</li>
+<li class="fragment">But this is usually not that useful when models get very complicated.</li>
+</ul>
+</section>
+<section id="examples-of-normal-distributions" class="slide level2">
+<h2>Examples of Normal distributions</h2>
+<p><span class="math display">\[Normal(1,0)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-18-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-normal-distributions-1" class="slide level2">
+<h2>Examples of Normal distributions</h2>
+<p><span class="math display">\[Normal(1,0)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-19-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-normal-distributions-2" class="slide level2">
+<h2>Examples of Normal distributions</h2>
+<p><span class="math display">\[Normal(0,5)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-20-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-normal-distributions-3" class="slide level2">
+<h2>Examples of Normal distributions</h2>
+<p><span class="math display">\[Normal(0,20)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-21-1.png" width="960" class="r-stretch"></section>
+<section id="binomial-beta" class="slide level2 smaller">
+<h2>Binomial-Beta</h2>
+<ul>
+<li class="fragment"><p>Likelihood</p></li>
+<li class="fragment"><p>Binomial distribution is when there is success (1) or failure (0) with the proportion of success (<span class="math inline">\(\pi\)</span>).</p></li>
+<li class="fragment"><p><span class="math inline">\(n\)</span> trials.</p></li>
+<li class="fragment"><p><span class="math display">\[
+y|\pi \sim Binomial(\pi,n)
+\]</span></p></li>
+<li class="fragment"><p>Prior</p></li>
+<li class="fragment"><p>Beta distribution is mathematically the conjugate of binomial defined by two parameters <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>.</p></li>
+<li class="fragment"><p>Beta distributuon is ‘natural’ fit becasue it ranges from 0 to 1.</p></li>
+<li class="fragment"><p><span class="math display">\[
+\pi \sim Beta(a,b)
+\]</span></p></li>
+</ul>
+</section>
+<section id="binomial-beta-1" class="slide level2">
+<h2>Binomial-Beta</h2>
+<ul>
+<li class="fragment"><p>Posterior</p></li>
+<li class="fragment"><p>Because of conjugacy, there is an analytical solution for the posterior.</p></li>
+<li class="fragment"><p><span class="math display">\[
+p(\pi|y) \sim Beta(y+a,n-y+b)
+\]</span></p></li>
+</ul>
+</section>
+<section id="examples-of-beta-distributions" class="slide level2">
+<h2>Examples of Beta distributions</h2>
+<p><span class="math display">\[Beta(2,10)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-22-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-beta-distributions-1" class="slide level2">
+<h2>Examples of Beta distributions</h2>
+<p><span class="math display">\[Beta(0.5,0.5)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-23-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-beta-distributions-2" class="slide level2">
+<h2>Examples of Beta distributions</h2>
+<p><span class="math display">\[Beta(5,1)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-24-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-beta-distributions-3" class="slide level2">
+<h2>Examples of Beta distributions</h2>
+<p><span class="math display">\[Beta(5,5)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-25-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-beta-distributions-4" class="slide level2">
+<h2>Examples of Beta distributions</h2>
+<p><span class="math display">\[Beta(5,20)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-26-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-beta-distributions-5" class="slide level2">
+<h2>Examples of Beta distributions</h2>
+<p><span class="math display">\[Beta(50,200)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-27-1.png" width="960" class="r-stretch"></section>
+<section id="types-of-conjugate-pairs-poisson-gamma" class="slide level2 smaller">
+<h2>Types of conjugate pairs: Poisson-Gamma</h2>
+<ul>
+<li class="fragment"><p>Likelihood</p></li>
+<li class="fragment"><p>Normal distribution is defined by on parameters <span class="math inline">\(\lambda\)</span>.</p></li>
+<li class="fragment"><p>Very common for count data.</p></li>
+<li class="fragment"><p><span class="math inline">\(\lambda\)</span> is rate.</p></li>
+<li class="fragment"><p><span class="math display">\[
+y|\lambda \sim Poisson(\lambda)
+\]</span></p></li>
+<li class="fragment"><p>Prior</p></li>
+<li class="fragment"><p>Gamma distribution is mathematically the conjugate of Poisson, with hyperparameters <span class="math inline">\(\mu_0\)</span> and <span class="math inline">\(\sigma_0\)</span>.</p></li>
+<li class="fragment"><p>Gamma distributuon is ‘natural’ fit becasue it ranges from 0 to <span class="math inline">\(\infty\)</span>.</p></li>
+<li class="fragment"><p><span class="math display">\[
+\lambda \sim Gamma(a,b)
+\]</span></p></li>
+</ul>
+</section>
+<section id="poisson-gamma" class="slide level2">
+<h2>Poisson-Gamma</h2>
+<ul>
+<li class="fragment"><p>Posterior</p></li>
+<li class="fragment"><p>Because of conjugacy, there is an analytical solution for the posterior.</p></li>
+<li class="fragment"><p><span class="math display">\[
+\rho | y \sim Gamma(a+y,b+E)
+\]</span></p></li>
+</ul>
+</section>
+<section id="examples-of-gamma-distributions" class="slide level2">
+<h2>Examples of Gamma distributions</h2>
+<p><span class="math display">\[Gamma(0.1,0.1)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-28-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-gamma-distributions-1" class="slide level2">
+<h2>Examples of Gamma distributions</h2>
+<p><span class="math display">\[Gamma(1,1)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-29-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-gamma-distributions-2" class="slide level2">
+<h2>Examples of Gamma distributions</h2>
+<p><span class="math display">\[Gamma(3,3)\]</span></p>
+
+<img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-30-1.png" width="960" class="r-stretch"></section>
+<section id="examples-of-gamma-distributions-3" class="slide level2">
+<h2>Examples of Gamma distributions</h2>
+<p><span class="math display">\[Gamma(3,0.5)\]</span></p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img data-src="introduction_to_bayesian_methods_files/figure-revealjs/unnamed-chunk-31-1.png" width="960"></p>
+</div>
+</div>
+<p><img src="../../assets/bmeh_normal.png" class="slide-logo"></p>
+<div class="footer footer-default">
+
+</div>
+</section></section>
+    </div>
+  </div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/quarto-support/support.js"></script>
+
+
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/search/search.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'smaller': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'chalkboard': {"buttons":false,"preview-links":"auto"},
+'smaller': false,
+
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: 'c/t',
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, RevealChalkboard, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+
+    <script>
+      // htmlwidgets need to know to resize themselves when slides are shown/hidden.
+      // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
+      // slide changes (different for each slide format).
+      (function () {
+        // dispatch for htmlwidgets
+        function fireSlideEnter() {
+          const event = window.document.createEvent("Event");
+          event.initEvent("slideenter", true, true);
+          window.document.dispatchEvent(event);
+        }
+
+        function fireSlideChanged(previousSlide, currentSlide) {
+          fireSlideEnter();
+
+          // dispatch for shiny
+          if (window.jQuery) {
+            if (previousSlide) {
+              window.jQuery(previousSlide).trigger("hidden");
+            }
+            if (currentSlide) {
+              window.jQuery(currentSlide).trigger("shown");
+            }
+          }
+        }
+
+        // hookup for slidy
+        if (window.w3c_slidy) {
+          window.w3c_slidy.add_observer(function (slide_num) {
+            // slide_num starts at position 1
+            fireSlideChanged(null, w3c_slidy.slides[slide_num - 1]);
+          });
+        }
+
+      })();
+    </script>
+
+    <script id="quarto-html-after-body" type="application/javascript">
+    window.document.addEventListener("DOMContentLoaded", function (event) {
+      const toggleBodyColorMode = (bsSheetEl) => {
+        const mode = bsSheetEl.getAttribute("data-mode");
+        const bodyEl = window.document.querySelector("body");
+        if (mode === "dark") {
+          bodyEl.classList.add("quarto-dark");
+          bodyEl.classList.remove("quarto-light");
+        } else {
+          bodyEl.classList.add("quarto-light");
+          bodyEl.classList.remove("quarto-dark");
+        }
+      }
+      const toggleBodyColorPrimary = () => {
+        const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+        if (bsSheetEl) {
+          toggleBodyColorMode(bsSheetEl);
+        }
+      }
+      toggleBodyColorPrimary();
+      const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+      tabsets.forEach(function(tabset) {
+        const tabby = new Tabby('#' + tabset.id);
+      });
+      const isCodeAnnotation = (el) => {
+        for (const clz of el.classList) {
+          if (clz.startsWith('code-annotation-')) {
+            return true;
+          }
+        }
+        return false;
+      }
+      const clipboard = new window.ClipboardJS('.code-copy-button', {
+        text: function(trigger) {
+          const codeEl = trigger.previousElementSibling.cloneNode(true);
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
+            }
+          }
+          return codeEl.innerText;
+        }
+      });
+      clipboard.on('success', function(e) {
+        // button target
+        const button = e.trigger;
+        // don't keep focus
+        button.blur();
+        // flash "checked"
+        button.classList.add('code-copy-button-checked');
+        var currentTitle = button.getAttribute("title");
+        button.setAttribute("title", "Copied!");
+        let tooltip;
+        if (window.bootstrap) {
+          button.setAttribute("data-bs-toggle", "tooltip");
+          button.setAttribute("data-bs-placement", "left");
+          button.setAttribute("data-bs-title", "Copied!");
+          tooltip = new bootstrap.Tooltip(button,
+            { trigger: "manual",
+              customClass: "code-copy-button-tooltip",
+              offset: [0, -8]});
+          tooltip.show();
+        }
+        setTimeout(function() {
+          if (tooltip) {
+            tooltip.hide();
+            button.removeAttribute("data-bs-title");
+            button.removeAttribute("data-bs-toggle");
+            button.removeAttribute("data-bs-placement");
+          }
+          button.setAttribute("title", currentTitle);
+          button.classList.remove('code-copy-button-checked');
+        }, 1000);
+        // clear code selection
+        e.clearSelection();
+      });
+      function tippyHover(el, contentFn) {
+        const config = {
+          allowHTML: true,
+          content: contentFn,
+          maxWidth: 500,
+          delay: 100,
+          arrow: false,
+          appendTo: function(el) {
+              return el.closest('section.slide') || el.parentElement;
+          },
+          interactive: true,
+          interactiveBorder: 10,
+          theme: 'light-border',
+          placement: 'bottom-start'
+        };
+          config['offset'] = [0,0];
+          config['maxWidth'] = 700;
+        window.tippy(el, config);
+      }
+      const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+      for (var i=0; i<noterefs.length; i++) {
+        const ref = noterefs[i];
+        tippyHover(ref, function() {
+          // use id or data attribute instead here
+          let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+          try { href = new URL(href).hash; } catch {}
+          const id = href.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          return note.innerHTML;
+        });
+      }
+      const findCites = (el) => {
+        const parentEl = el.parentElement;
+        if (parentEl) {
+          const cites = parentEl.dataset.cites;
+          if (cites) {
+            return {
+              el,
+              cites: cites.split(' ')
+            };
+          } else {
+            return findCites(el.parentElement)
+          }
+        } else {
+          return undefined;
+        }
+      };
+      var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+      for (var i=0; i<bibliorefs.length; i++) {
+        const ref = bibliorefs[i];
+        const citeInfo = findCites(ref);
+        if (citeInfo) {
+          tippyHover(citeInfo.el, function() {
+            var popup = window.document.createElement('div');
+            citeInfo.cites.forEach(function(cite) {
+              var citeDiv = window.document.createElement('div');
+              citeDiv.classList.add('hanging-indent');
+              citeDiv.classList.add('csl-entry');
+              var biblioDiv = window.document.getElementById('ref-' + cite);
+              if (biblioDiv) {
+                citeDiv.innerHTML = biblioDiv.innerHTML;
+              }
+              popup.appendChild(citeDiv);
+            });
+            return popup.innerHTML;
+          });
+        }
+      }
+    });
+    </script>
+
+
+</body></html>
