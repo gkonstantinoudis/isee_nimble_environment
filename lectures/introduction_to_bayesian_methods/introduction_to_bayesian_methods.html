@@ -8,7 +8,7 @@
 <link href="introduction_to_bayesian_methods_files/libs/quarto-html/light-border.css" rel="stylesheet">
 <link href="introduction_to_bayesian_methods_files/libs/quarto-html/quarto-html.min.css" rel="stylesheet" data-mode="light">
 <link href="introduction_to_bayesian_methods_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.3.354">
+  <meta name="generator" content="quarto-1.3.353">
 
   <meta name="author" content="Robbie M. Parks">
   <title>Introduction to Bayesian Methods</title>
@@ -26,7 +26,7 @@
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
       width: 0.8em;
-      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
     /* CSS for syntax highlighting */
@@ -106,11 +106,11 @@
 
   .callout {
     margin-top: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 1em;  
     border-radius: .25rem;
   }
 
-  .callout.callout-style-simple {
+  .callout.callout-style-simple { 
     padding: 0em 0.5em;
     border-left: solid #acacac .3rem;
     border-right: solid 1px silver;
@@ -161,7 +161,7 @@
     margin-top: 0.5em;
     margin-bottom: 0.5em;
   }
-
+    
   .callout.callout-titled.callout-style-simple .callout-content  p {
     margin-top: 0;
   }
@@ -212,7 +212,7 @@
   .callout-title {
     display: flex
   }
-
+    
   .callout-icon::before {
     margin-top: 1rem;
     padding-right: .5rem;
@@ -324,12 +324,12 @@
     }
     .reveal .footnotes ol {
       counter-reset: ol;
-      list-style-type: none;
+      list-style-type: none; 
       margin-left: 0;
     }
     .reveal .footnotes ol li:before {
       counter-increment: ol;
-      content: counter(ol) ". ";
+      content: counter(ol) ". "; 
     }
     .reveal .footnotes ol li > p:first-child {
       display: inline-block;
@@ -371,19 +371,19 @@
     .reveal .slide > img.r-stretch.quarto-figure-center {
       display: block;
       margin-left: auto;
-      margin-right: auto;
+      margin-right: auto; 
     }
     .reveal .slide > img.stretch.quarto-figure-left,
     .reveal .slide > img.r-stretch.quarto-figure-left  {
       display: block;
       margin-left: 0;
-      margin-right: auto;
+      margin-right: auto; 
     }
     .reveal .slide > img.stretch.quarto-figure-right,
     .reveal .slide > img.r-stretch.quarto-figure-right  {
       display: block;
       margin-left: auto;
-      margin-right: 0;
+      margin-right: 0; 
     }
   </style>
 </head>
@@ -398,7 +398,7 @@
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
 <div class="quarto-title-author-name">
-Robbie M. Parks
+Robbie M. Parks 
 </div>
 <div class="quarto-title-author-email">
 <a href="mailto:robbie.parks@columbia.edu">robbie.parks@columbia.edu</a>
@@ -409,7 +409,7 @@ Robbie M. Parks
     </div>
 </div>
 
-  <p class="date">Aug 14, 2023</p>
+  <p class="date">Sep 17, 2023</p>
 </section>
 <section id="outline" class="title-slide slide level1 center">
 <h1>Outline</h1>
@@ -1039,7 +1039,7 @@ x3           0.29160573  0.28189340 0.301318063</code></pre>
 |-------------------------------------------------------|</code></pre>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 51.01255 secs</code></pre>
+<pre><code>Time difference of 3.399485 mins</code></pre>
 </div>
 </div>
 </section>
@@ -1068,9 +1068,9 @@ x3           0.29160573  0.28189340 0.301318063</code></pre>
   variable     mean   median      sd     mad      q5     q95
   &lt;chr&gt;       &lt;num&gt;    &lt;num&gt;   &lt;num&gt;   &lt;num&gt;   &lt;num&gt;   &lt;num&gt;
 1 alpha    -0.00395 -0.00388 0.00500 0.00498 -0.0122 0.00426
-2 beta1     0.202    0.202   0.00492 0.00485  0.194  0.210
-3 beta2     0.493    0.493   0.00506 0.00511  0.484  0.501
-4 beta3     0.292    0.292   0.00499 0.00502  0.283  0.300
+2 beta1     0.202    0.202   0.00492 0.00485  0.194  0.210  
+3 beta2     0.493    0.493   0.00506 0.00511  0.484  0.501  
+4 beta3     0.292    0.292   0.00499 0.00502  0.283  0.300  
 5 sigma     0.499    0.499   0.0122  0.00372  0.493  0.505  </code></pre>
 </div>
 </div>
@@ -1383,7 +1383,7 @@ y|\lambda \sim Poisson(\lambda)
   <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
   <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/reveal-chalkboard/plugin.js"></script>
   <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/quarto-support/support.js"></script>
-
+  
 
   <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/notes/notes.js"></script>
   <script src="introduction_to_bayesian_methods_files/libs/revealjs/plugin/search/search.js"></script>
@@ -1406,7 +1406,7 @@ y|\lambda \sim Poisson(\lambda)
 'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleChalkboard(event)\"><kbd>b</kbd> Toggle Chalkboard</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleNotesCanvas(event)\"><kbd>c</kbd> Toggle Notes Canvas</a></li>\n<li class=\"slide-tool-item\" data-item=\"6\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.downloadDrawings(event)\"><kbd>d</kbd> Download Drawings</a></li>\n<li class=\"slide-tool-item\" data-item=\"7\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
 'chalkboard': {"buttons":false,"preview-links":"auto"},
 'smaller': false,
-
+ 
         // Display controls in the bottom right corner
         controls: false,
 
@@ -1584,7 +1584,7 @@ y|\lambda \sim Poisson(\lambda)
         ]
       });
     </script>
-
+    
     <script>
       // htmlwidgets need to know to resize themselves when slides are shown/hidden.
       // Fire the "slideenter" event (handled by htmlwidgets.js) when the current
@@ -1641,14 +1641,14 @@ y|\lambda \sim Poisson(\lambda)
           toggleBodyColorMode(bsSheetEl);
         }
       }
-      toggleBodyColorPrimary();
+      toggleBodyColorPrimary();  
       const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
       tabsets.forEach(function(tabset) {
         const tabby = new Tabby('#' + tabset.id);
       });
       const isCodeAnnotation = (el) => {
         for (const clz of el.classList) {
-          if (clz.startsWith('code-annotation-')) {
+          if (clz.startsWith('code-annotation-')) {                     
             return true;
           }
         }
@@ -1679,11 +1679,11 @@ y|\lambda \sim Poisson(\lambda)
           button.setAttribute("data-bs-toggle", "tooltip");
           button.setAttribute("data-bs-placement", "left");
           button.setAttribute("data-bs-title", "Copied!");
-          tooltip = new bootstrap.Tooltip(button,
-            { trigger: "manual",
+          tooltip = new bootstrap.Tooltip(button, 
+            { trigger: "manual", 
               customClass: "code-copy-button-tooltip",
               offset: [0, -8]});
-          tooltip.show();
+          tooltip.show();    
         }
         setTimeout(function() {
           if (tooltip) {
@@ -1715,7 +1715,7 @@ y|\lambda \sim Poisson(\lambda)
         };
           config['offset'] = [0,0];
           config['maxWidth'] = 700;
-        window.tippy(el, config);
+        window.tippy(el, config); 
       }
       const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
       for (var i=0; i<noterefs.length; i++) {
@@ -1768,6 +1768,6 @@ y|\lambda \sim Poisson(\lambda)
       }
     });
     </script>
-
+    
 
 </body></html>
