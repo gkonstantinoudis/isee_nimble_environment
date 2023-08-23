@@ -2,15 +2,6 @@
 
 # To install the packaged required for the tutorials please follow the steps bellow:
 
-# INLA is weird so do the following
-
-# install INLA
-if (("INLA" %in% installed.packages()) == F) {
-  install.packages("INLA", repos = c(getOption("repos"), INLA = "https://inla.r-inla-download.org/R/testing"), dep = TRUE)
-}
-
-# For the other packages:
-
 # install packages:
 list.of.packages <- c(
   "here", "tidyverse", "bayesplot", "posterior", "hrbrthemes",
