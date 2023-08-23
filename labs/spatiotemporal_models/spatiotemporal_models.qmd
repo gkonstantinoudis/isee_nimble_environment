@@ -1,8 +1,8 @@
 ---
 title: "Spatial and Spatio-temporal Modelling"
-subtitle: "SHARP Bayesian Modeling for Environmental Health Workshop"
+subtitle: "ISEE Bayesian Modeling for Environmental Health Workshop"
 author: "Garyfallos Konstantinoudis"
-date: "August 15 2023"
+date: "September 17 2023"
 format: html
 ---
 
@@ -19,7 +19,7 @@ library(colorspace)
 
 extrafont::loadfonts()
 theme_set(hrbrthemes::theme_ipsum())
-knitr::opts_chunk$set(fig.align = "center")
+knitr::opts_chunk$set(fig.align = "center", warning = FALSE)
 
 set.seed(2)
 ```

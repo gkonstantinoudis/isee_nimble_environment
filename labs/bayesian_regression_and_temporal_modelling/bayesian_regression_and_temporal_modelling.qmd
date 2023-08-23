@@ -1,8 +1,8 @@
 ---
 title: "Bayesian Regression and Temporal modelling"
-subtitle: "SHARP Bayesian Modeling for Environmental Health Workshop"
-author: "Robbie M. Parks, Theo Rashid"
-date: "August 14 2023"
+subtitle: "ISEE Bayesian Modeling for Environmental Health Workshop"
+author: "Robbie M. Parks"
+date: "September 17 2023"
 format: html
 ---
 
@@ -18,7 +18,7 @@ extrafont::loadfonts()
 theme_set(theme_ipsum())
 
 color_scheme_set(scheme = "viridis")
-
+knitr::opts_chunk$set(eval = TRUE, echo = TRUE, warning = FALSE)
 set.seed(2)
 ```
 
@@ -41,7 +41,7 @@ During this lab session, we will:
 
 We will be using national death count data for Spain during 2010-2019, as taken from the published paper:
 
-V. Kontis, J.E. Bennett, __R.M. Parks__, __T. Rashid__, J. Pearson-Stuttard, P. Asaria, B. Zhou, M. Guillot, C.D. Mathers, Y.H. Khang, M. McKee and M. Ezzati. _Lessons learned and lessons missed: impact of the coronavirus disease 2019 (COVID-19) pandemic on all-cause mortality in 40 industrialised countries prior to mass vaccination_. Wellcome Open Research 2021, 6:279
+V. Kontis, J.E. Bennett, __R.M. Parks__, T. Rashid, J. Pearson-Stuttard, P. Asaria, B. Zhou, M. Guillot, C.D. Mathers, Y.H. Khang, M. McKee and M. Ezzati. _Lessons learned and lessons missed: impact of the coronavirus disease 2019 (COVID-19) pandemic on all-cause mortality in 40 industrialised countries prior to mass vaccination_. Wellcome Open Research 2021, 6:279
 
 For that analysis, we applied an Bayesian methods to weekly mortality records in 40 industrialised countries around the world. We're choosing Spain because it was one of the records which had a long time series of data, but it could have be another country. There's no particular reason we used Spain other than that. But Spain it is!
 
@@ -194,7 +194,7 @@ And how good do convergence indicators look?
 summarise_draws(nimbleMCMC_samples_linear, default_convergence_measures())
 ```
 
-```{r}
+```{r, fig.width=12}
 mcmc_trace(nimbleMCMC_samples_linear)
 ```
 
@@ -701,7 +701,8 @@ linear_month_temp_fit |>
 
 What does the summary of the monthly temperature terms look like?
 ```{r}
-mcmc_intervals(nimbleMCMC_samples_week_random_walk_with_temperature_by_month, regex_pars = c("beta_temperature")) + coord_flip()
+mcmc_intervals(nimbleMCMC_samples_week_random_walk_with_temperature_by_month, regex_pars = c("beta_temperature")) + 
+  coord_flip() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
 ## Closing remarks

@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.354">
+<meta name="generator" content="quarto-1.3.353">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Garyfallos Konstantinoudis">
-<meta name="dcterms.date" content="2023-08-15">
+<meta name="dcterms.date" content="2023-09-17">
 
 <title>Spatial and Spatio-temporal Modelling</title>
 <style>
@@ -19,7 +19,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
@@ -85,7 +85,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Spatial and Spatio-temporal Modelling</h1>
-<p class="subtitle lead">SHARP Bayesian Modeling for Environmental Health Workshop</p>
+<p class="subtitle lead">ISEE Bayesian Modeling for Environmental Health Workshop</p>
 </div>
 
 
@@ -98,17 +98,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
              <p>Garyfallos Konstantinoudis </p>
           </div>
   </div>
-
+    
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 15, 2023</p>
+      <p class="date">September 17, 2023</p>
     </div>
   </div>
-
-
+  
+    
   </div>
-
+  
 
 </header>
 
@@ -152,19 +152,19 @@ $ geometry &lt;MULTIPOLYGON [m]&gt; MULTIPOLYGON (((447213.9 53..., MULTIPOLYGON
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(data_england)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>     LTLA               deaths          expectd           TtlICUB
- Length:316         Min.   :   4.0   Min.   :  8.287   Min.   :0.000e+00
- Class :character   1st Qu.:  77.0   1st Qu.: 99.339   1st Qu.:8.548e-05
- Mode  :character   Median : 117.5   Median :129.067   Median :8.092e-03
-                    Mean   : 155.6   Mean   :155.630   Mean   :1.399e-02
-                    3rd Qu.: 191.2   3rd Qu.:177.896   3rd Qu.:1.460e-02
-                    Max.   :1226.0   Max.   :903.219   Max.   :1.911e-01
-      NO2             IMD                 geometry
- Min.   : 4.48   Min.   :1.000   MULTIPOLYGON :316
- 1st Qu.:11.09   1st Qu.:2.000   epsg:27700   :  0
- Median :13.96   Median :3.000   +proj=tmer...:  0
- Mean   :15.05   Mean   :2.997
- 3rd Qu.:17.26   3rd Qu.:4.000
+<pre><code>     LTLA               deaths          expectd           TtlICUB         
+ Length:316         Min.   :   4.0   Min.   :  8.287   Min.   :0.000e+00  
+ Class :character   1st Qu.:  77.0   1st Qu.: 99.339   1st Qu.:8.548e-05  
+ Mode  :character   Median : 117.5   Median :129.067   Median :8.092e-03  
+                    Mean   : 155.6   Mean   :155.630   Mean   :1.399e-02  
+                    3rd Qu.: 191.2   3rd Qu.:177.896   3rd Qu.:1.460e-02  
+                    Max.   :1226.0   Max.   :903.219   Max.   :1.911e-01  
+      NO2             IMD                 geometry  
+ Min.   : 4.48   Min.   :1.000   MULTIPOLYGON :316  
+ 1st Qu.:11.09   1st Qu.:2.000   epsg:27700   :  0  
+ Median :13.96   Median :3.000   +proj=tmer...:  0  
+ Mean   :15.05   Mean   :2.997                      
+ 3rd Qu.:17.26   3rd Qu.:4.000                      
  Max.   :46.45   Max.   :5.000                      </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(data_england)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -173,13 +173,13 @@ $ geometry &lt;MULTIPOLYGON [m]&gt; MULTIPOLYGON (((447213.9 53..., MULTIPOLYGON
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data_england_simpler <span class="ot">&lt;-</span> rgeos<span class="sc">::</span><span class="fu">gSimplify</span>(<span class="fu">as</span>(data_england, <span class="st">"Spatial"</span>), <span class="at">tol =</span> <span class="dv">500</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>rgeos version: 0.6-4, (SVN revision 699)
- GEOS runtime version: 3.11.0-CAPI-1.17.0
+<pre><code>rgeos version: 0.6-3, (SVN revision 696)
+ GEOS runtime version: 3.11.2-CAPI-1.17.2 
  Please note that rgeos will be retired during October 2023,
 plan transition to sf or terra functions using GEOS at your earliest convenience.
 See https://r-spatial.org/r/2023/05/15/evolution4.html for details.
  GEOS using OverlayNG
- Linking to sp version: 2.0-0
+ Linking to sp version: 1.6-0 
  Polygon checking: TRUE </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data_england_simpler <span class="ot">&lt;-</span> <span class="fu">st_as_sf</span>(data_england_simpler)</span>
@@ -577,10 +577,10 @@ w_{ij} =
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>LTLA_nb</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Neighbour list object:
-Number of regions: 316
-Number of nonzero links: 1332
-Percentage nonzero weights: 1.333921
-Average number of links: 4.21519
+Number of regions: 316 
+Number of nonzero links: 1332 
+Percentage nonzero weights: 1.333921 
+Average number of links: 4.21519 
 3 regions with no links:
 44 95 284</code></pre>
 </div>
@@ -931,12 +931,12 @@ RR.beta[6] 0.9140398 0.9142683 0.05849248 0.7988786 1.0307437</code></pre>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 6 × 4
   Median `95%CI_low` `95%CI_upp` covariate
-   &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;
-1  1.25        1.16        1.34  NO2
-2  0.964       0.934       0.996 ICU
-3  0.936       0.844       1.04  IMD2
-4  0.902       0.809       1.00  IMD3
-5  0.950       0.837       1.06  IMD4
+   &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt; &lt;fct&gt;    
+1  1.25        1.16        1.34  NO2      
+2  0.964       0.934       0.996 ICU      
+3  0.936       0.844       1.04  IMD2     
+4  0.902       0.809       1.00  IMD3     
+5  0.950       0.837       1.06  IMD4     
 6  0.914       0.799       1.03  IMD5     </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>cov.eff <span class="sc">|&gt;</span></span>
@@ -958,13 +958,13 @@ RR.beta[6] 0.9140398 0.9142683 0.05849248 0.7988786 1.0307437</code></pre>
 <div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># as relative risk per 1 unit increase in the long term NO2 exposure</span></span>
 <span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>modelBYMeco.sim<span class="sc">$</span>summary<span class="sc">$</span>all.chains[<span class="fu">paste0</span>(<span class="st">"RR.beta1_1NO2"</span>), <span class="fu">c</span>(<span class="st">"Median"</span>, <span class="st">"95%CI_low"</span>, <span class="st">"95%CI_upp"</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Median 95%CI_low 95%CI_upp
+<pre><code>   Median 95%CI_low 95%CI_upp 
  1.038588  1.025246  1.050411 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># as percentage increase in mortality for 1 unit increase in the long term NO2 exposure</span></span>
 <span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>(modelBYMeco.sim<span class="sc">$</span>summary<span class="sc">$</span>all.chains[<span class="fu">paste0</span>(<span class="st">"RR.beta1_1NO2"</span>), <span class="fu">c</span>(<span class="st">"Median"</span>, <span class="st">"95%CI_low"</span>, <span class="st">"95%CI_upp"</span>)] <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>   Median 95%CI_low 95%CI_upp
+<pre><code>   Median 95%CI_low 95%CI_upp 
  3.858833  2.524564  5.041070 </code></pre>
 </div>
 </div>
@@ -1027,7 +1027,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       toggleBodyColorMode(bsSheetEl);
     }
   }
-  toggleBodyColorPrimary();
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
@@ -1037,7 +1037,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {
+      if (clz.startsWith('code-annotation-')) {                     
         return true;
       }
     }
@@ -1068,11 +1068,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       button.setAttribute("data-bs-toggle", "tooltip");
       button.setAttribute("data-bs-placement", "left");
       button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button,
-        { trigger: "manual",
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
           customClass: "code-copy-button-tooltip",
           offset: [0, -8]});
-      tooltip.show();
+      tooltip.show();    
     }
     setTimeout(function() {
       if (tooltip) {
@@ -1102,7 +1102,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       theme: 'quarto',
       placement: 'bottom-start'
     };
-    window.tippy(el, config);
+    window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
   for (var i=0; i<noterefs.length; i++) {
@@ -1147,7 +1147,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             height = bottom - top;
           }
           if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it
+            // cook up a div (if necessary) and position it 
             let div = window.document.getElementById("code-annotation-line-highlight");
             if (div === null) {
               div = window.document.createElement("div");

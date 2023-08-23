@@ -2,7 +2,7 @@
 
 ## Introduction
 
-GitHub repo through which we're developing and sharing materials for the ISEE Bayesian Modeling for Environmental Health Workshop, taking place in person in September 17 2023.
+GitHub repo through which we're developing and sharing materials for the ISEE Bayesian Modeling for Environmental Health Workshop, taking place in person in September 17 2023. This course is an adaptation of the [SHARP Bayesian Modeling for Environmental Health Workshop](https://www.publichealth.columbia.edu/research/programs/precision-prevention/sharp-training-program/bayesian-modeling#:~:text=The%20Bayesian%20Modeling%20for%20Environmental,with%20applications%20in%20Environmental%20Health.) that took place at Columbia University during 14-15 August 2023. We would like to acknowledge [Theo O. Rashid](https://www.imperial.ac.uk/people/theo.rashid15) and [Elizaveta Semenova](https://www.cs.ox.ac.uk/people/elizaveta.semenova/) for their contribution to the lecture material and r-code. 
 
 ## Notes for attendees
 
@@ -10,7 +10,7 @@ The workshop will be a series of lectures and interactive supervised lab session
 
 We will be using `R` and `RStudio`. We will also ask you to pull the final versions of the `GitHub` repo to your local machine. The basics of doing this are found via [git-guide](https://github.com/git-guides/git-pull).
 
-This workshop is largely written in [`NIMBLE`](https://r-nimble.org/).
+This workshop is written in [`NIMBLE`](https://r-nimble.org/).
 
 Below is the set of labs to follow throughout the day:
 

@@ -18,7 +18,7 @@ extrafont::loadfonts()
 theme_set(theme_ipsum())
 
 color_scheme_set(scheme = "viridis")
-
+knitr::opts_chunk$set(eval = TRUE, echo = TRUE, warning = FALSE)
 set.seed(2)
 ```
 
