@@ -262,6 +262,7 @@ linear_fit |>
 - Extension of linear regression to when distribution not necessarily normally distributed.
 - Distributions which are part of the exponential family can describe all sort of non-normally distributed variables.
 - Many examples commonly encountered in environmental health.
+- Nature likes maximum entropy.
 - We'll go through a few now...
 
 ## Exponential family of models

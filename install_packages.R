@@ -1,6 +1,6 @@
 # Welcome to the Bayesian Modeling for Environmental Health Workshop!
 
-# To install the packaged required for the tutorials please follow the steps bellow:
+# To install the packaged required for the tutorials please follow the steps below:
 
 # install packages:
 list.of.packages <- c(

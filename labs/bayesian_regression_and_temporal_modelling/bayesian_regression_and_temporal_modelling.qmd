@@ -710,5 +710,5 @@ mcmc_intervals(nimbleMCMC_samples_week_random_walk_with_temperature_by_month, re
 In this lab session, we have explored how to fit some increasingly sophisticated time series models using Bayesian regression in `NIMBLE`.
 We looked at models which started off with a linear time trend, then a random walk, then including a few kinds of temperature terms.
 
-Other topics that will be related to this will be how to include a more general longer-memory autoregressive term, and also how to forecast based on model fit.
+Other topics that will be related to this will be how to include a more general longer-memory autoregressive term, and also how to forecast based on model fit, as well as the perils of overfitting.
 However, in the limited time that we have, this lab provides a foundation for learning about other methods and techniques, some of which will be elaborated upon in the coming lab sessions.

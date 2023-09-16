@@ -48,7 +48,7 @@ library(hrbrthemes)
 - Would like some tools and know-how to get started in an approachable and friendly setting.
 - People who would like to have some fun while learning!
 - Some equations will be there but mainly for reference.
-- Lots of code though throughout the two days...
+- Lots of code though throughout today...
 
 ## `R`
 
@@ -110,18 +110,18 @@ plot(p)
 
 ![](assets/what_is_rstudio.png){.r-stretch}
 
-## `Posit` (`RStudio`) `Cloud` {.smaller}
+<!-- ## `Posit` (`RStudio`) `Cloud` {.smaller} -->
 
-- We will assume you have done the preliminary homework, which includes learning the basics of `RStudio` `Cloud`.
-- `RStudio` `Cloud` is a cloud-based `RStudio` which runs projects and code in the cloud.
-- `RStudio` `Cloud` allows convenient scaling and sharing of code, including for training programs such as SHARP.
-- Registration for free is available via [https://rstudio.cloud/](https://rstudio.cloud/).
-- We will go through how to navigate `RStudio` `Cloud` together
-- More details are available via [https://rstudio.cloud/learn/guide](https://rstudio.cloud/learn/guide).
+<!-- - We will assume you have done the preliminary homework, which includes learning the basics of `RStudio` `Cloud`. -->
+<!-- - `RStudio` `Cloud` is a cloud-based `RStudio` which runs projects and code in the cloud. -->
+<!-- - `RStudio` `Cloud` allows convenient scaling and sharing of code, including for training programs such as SHARP. -->
+<!-- - Registration for free is available via [https://rstudio.cloud/](https://rstudio.cloud/). -->
+<!-- - We will go through how to navigate `RStudio` `Cloud` together -->
+<!-- - More details are available via [https://rstudio.cloud/learn/guide](https://rstudio.cloud/learn/guide). -->
 
 ## `GitHub`
 
-- Version control to interface with `Posit` (`RStudio`) `Cloud.`
+- Version control to interface with (`RStudio`).
 - This is just for information, as you will not be expected to be an expert on `GitHub` to participate in this `SHARP` course.
 - However, you should learn it in general as it's really useful in today's modern research environment.
 
@@ -528,7 +528,7 @@ code_worse_priors <- nimbleCode({
 - Some kind of software to help us implement models for inference.
 - Using `R`.
 - Packages (`BUGS`,`STAN`,`INLA` etc.).
-- We will be focusing on using `NIMBLE` throughout the two days.
+- We will be focusing on using `NIMBLE` throughout today.
 
 # Using `NIMBLE` for Bayesian inference
 
@@ -537,7 +537,7 @@ code_worse_priors <- nimbleCode({
 - Interpretability.
 - Flexibility.
 - There are other Bayesian packages.
-- You will see on Day 2...
+- Examples include `INLA`, `STAN`
 
 ## Illustrative example of basic regression in `NIMBLE`
 

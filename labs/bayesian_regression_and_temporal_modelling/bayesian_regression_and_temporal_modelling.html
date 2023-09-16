@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.353">
+<meta name="generator" content="quarto-1.3.354">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -342,7 +342,7 @@ y_t &amp;\sim \text{Pois}(\mu_t) \quad i = 1,..., T \\
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>toc <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>toc <span class="sc">-</span> tic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 55.8782 secs</code></pre>
+<pre><code>Time difference of 9.200365 secs</code></pre>
 </div>
 </div>
 <p>What is the summary of each estimated parameter from the Poisson model?</p>
@@ -518,7 +518,7 @@ y_t &amp;\sim \text{Pois}(\mu_t) \quad i = t,..., T \\
 <div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>toc <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>toc <span class="sc">-</span> tic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 45.3499 secs</code></pre>
+<pre><code>Time difference of 12.5032 secs</code></pre>
 </div>
 </div>
 <p>What is the summary of each estimated parameter from the model with the random walk over time included?</p>
@@ -614,7 +614,7 @@ y_t &amp;\sim \text{Pois}(\mu_t) \quad i = t,..., T \\
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>toc <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>toc <span class="sc">-</span> tic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 51.58648 secs</code></pre>
+<pre><code>Time difference of 13.77231 secs</code></pre>
 </div>
 </div>
 <p>What is the summary of each estimated parameter from the model with the random walk over time included but with more samples?</p>
@@ -817,7 +817,7 @@ y_t &amp;\sim \text{Pois}(\mu_t) \quad i = t,..., T \\
 <div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>toc <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>toc <span class="sc">-</span> tic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 59.75867 secs</code></pre>
+<pre><code>Time difference of 16.11746 secs</code></pre>
 </div>
 </div>
 <p>What is the summary of each estimated parameter from the model with the random walk over time and single linear temperature term?</p>
@@ -1039,7 +1039,7 @@ y_t &amp;\sim \text{Pois}(\mu_t) \quad i = t,..., T \\
 <div class="sourceCode cell-code" id="cb118"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb118-1"><a href="#cb118-1" aria-hidden="true" tabindex="-1"></a>toc <span class="ot">&lt;-</span> <span class="fu">Sys.time</span>()</span>
 <span id="cb118-2"><a href="#cb118-2" aria-hidden="true" tabindex="-1"></a>toc <span class="sc">-</span> tic</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Time difference of 3.256967 mins</code></pre>
+<pre><code>Time difference of 55.51224 secs</code></pre>
 </div>
 </div>
 <p>What is the summary of each estimated parameter from the model with the random walk over time and month-specific linear temperature term?</p>
@@ -1136,7 +1136,7 @@ y_t &amp;\sim \text{Pois}(\mu_t) \quad i = t,..., T \\
 <section id="closing-remarks" class="level2">
 <h2 class="anchored" data-anchor-id="closing-remarks">Closing remarks</h2>
 <p>In this lab session, we have explored how to fit some increasingly sophisticated time series models using Bayesian regression in <code>NIMBLE</code>. We looked at models which started off with a linear time trend, then a random walk, then including a few kinds of temperature terms.</p>
-<p>Other topics that will be related to this will be how to include a more general longer-memory autoregressive term, and also how to forecast based on model fit. However, in the limited time that we have, this lab provides a foundation for learning about other methods and techniques, some of which will be elaborated upon in the coming lab sessions.</p>
+<p>Other topics that will be related to this will be how to include a more general longer-memory autoregressive term, and also how to forecast based on model fit, as well as the perils of overfitting. However, in the limited time that we have, this lab provides a foundation for learning about other methods and techniques, some of which will be elaborated upon in the coming lab sessions.</p>
 </section>
 
 </main>

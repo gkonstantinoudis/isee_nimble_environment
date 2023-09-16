@@ -1,5 +1,5 @@
 ---
-title: "Bayesian Modelling for Environmental Health"
+title: "ISEE Bayesian Modelling for Environmental Health"
 subtitle: "Welcome and Introduction"
 author:
  - name: ""
@@ -29,7 +29,7 @@ format:
 ## Overview of workshop {.bigger}
 
 ::: {style="font-size: 130%;"}
-The __Bayesian Modeling for Environmental Health Workshop__ is a one-day intensive course of seminars and hands-on analytical sessions to provide an _approachable_ and _practical_ overview of __concepts__, __techniques__, and __data analysis methods__ used in Bayesian modeling with applications in Environmental Health.
+The __ISEE Bayesian Modeling for Environmental Health Workshop__ is a one-day intensive course of seminars and hands-on analytical sessions to provide an _approachable_ and _practical_ overview of __concepts__, __techniques__, and __data analysis methods__ used in Bayesian modeling with applications in Environmental Health.
 :::
 
 ## Overview of workshop {.smaller}
@@ -40,7 +40,7 @@ The __Bayesian Modeling for Environmental Health Workshop__ is a one-day intensi
   - Principles of Bayesian inference
   - Practicalities of Bayesian inference
   - Choosing priors
-  - Different data structures (spatial, point, continuous, categorical)
+  - Different data structures
   - Advantages and drawbacks of Bayesian approaches
   - Temporal modeling
   - Spatial modeling
@@ -53,15 +53,23 @@ The __Bayesian Modeling for Environmental Health Workshop__ is a one-day intensi
 
 ![](assets/isee_lecturers.png)
 
-## Other people contributed to this material
+## Other people contributed to this material (great people)
 
 ![](assets/theo_liza.png)
 
-## SHAPR Bayesian Modelling Workshop Team
+## SHARP Bayesian Modelling Workshop Team (more great people)
 
 ![](assets/instructor.png)
 
-## Programme
+## SHARP Summer Course
+
+![](assets/sharp_poster.png){fig-align="center"}
+
+## SHARP Summer Course
+
+![](assets/sharp_group_summer_2023.png){fig-align="center"}
+
+## Programme today
 
 ::: {style="font-size: 50%;"}
 
@@ -82,5 +90,22 @@ The __Bayesian Modeling for Environmental Health Workshop__ is a one-day intensi
 | 17:00 - 17:15 | Questions and Wrap-up |
 
 :::
+
+# Packages installed?
+
+## Hopefully, but if not yet...
+
+``` R
+# To install the packaged required for the tutorials please follow the steps below:
+
+# install packages:
+list.of.packages <- c(
+  "here", "tidyverse", "bayesplot", "posterior", "hrbrthemes",
+  "colorspace", "readr", "ggplot2", "rgeos", "patchwork",
+  "coda", "ggmcmc", "lubridate", "fastDummies", "nimble"
+)
+new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[, "Package"])]
+if (length(new.packages)) install.packages(new.packages)
+```
 
 # Questions?
