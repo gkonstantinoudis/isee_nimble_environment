@@ -1,4 +1,5 @@
-# ISEE: Bayesian Modeling for Environmental Health Workshop
+# ISEE 2023: Bayesian Modeling for Environmental Health Workshop
+Garyfallos Konstantinoudis and Robbie M. Parks
 
 ## Introduction
 
