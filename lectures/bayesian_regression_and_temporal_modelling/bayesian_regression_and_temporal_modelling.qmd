@@ -39,7 +39,6 @@ library(hrbrthemes)
 - Using `NIMBLE` for Bayesian inference
 
 # Overview
-
 ## Finding associations from data
 
 ::: nonincremental

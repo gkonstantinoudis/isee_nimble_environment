@@ -99,14 +99,14 @@ p <- ggplot(data, aes(x, y)) +
 plot(p)
 ```
 
-## `RStudio` by `Posit`
+## `RStudio`
 
 - `RStudio` is an integrated development environment (IDE) for `R`.
 - `RStudio` provides a convenient graphical interface to `R`, making it more user-friendly, and providing many useful features.
 - Such features include direct code execution, tools for plotting, history, debugging and workspace management.
 - A more detailed background on to `RStudio` can be found at [https://www.rstudio.com/about/](https://www.rstudio.com/about/).
 
-## `RStudio` by `Posit`
+## `RStudio` 
 
 ![](assets/what_is_rstudio.png){.r-stretch}
 
@@ -122,7 +122,7 @@ plot(p)
 ## `GitHub`
 
 - Version control to interface with (`RStudio`).
-- This is just for information, as you will not be expected to be an expert on `GitHub` to participate in this `SHARP` course.
+- This is just for information, as you will not be expected to be an expert on `GitHub` to participate in this workshop.
 - However, you should learn it in general as it's really useful in today's modern research environment.
 
 ![](assets/github_banner.png){.r-stretch}

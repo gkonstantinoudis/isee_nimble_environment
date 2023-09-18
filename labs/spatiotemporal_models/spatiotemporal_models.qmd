@@ -41,7 +41,7 @@ During this lab session, we will:
 
 We will use the COVID-19 deaths during March-July 2020, in England, at the LTLA geographical level (317 areas), as taken from the published paper:
 
-__Konstantinoudis G__, Padellini T, Bennett JE, Davies B, Ezzati M, Blangiardo M. _Long-term exposure to air-pollution and COVID-19 mortality in England: a hierarchical spatial analysis_. medRxiv [Preprint]. 2020 Aug 11:2020.08.10.20171421. doi: 10.1101/2020.08.10.20171421. Update in: Environ Int. 2021 Jan;146:106316. PMID: 32817974; PMCID: PMC7430619.
+__Konstantinoudis G__, Padellini T, Bennett JE, Davies B, Ezzati M, Blangiardo M. _Long-term exposure to air-pollution and COVID-19 mortality in England: a hierarchical spatial analysis_. Environmental International 2021, 146: 106316. 
 
 For that analysis, we included 38,573 COVID-19 deaths up to June 30, 2020 at the Lower Layer Super Output Area level in England ($n = 32844$ small areas).
 We retrieved averaged NO$_2$ concentration during 2014-2018 from the Pollution Climate Mapping.
